@@ -25,6 +25,6 @@ type Bur struct {
 	Name    string
 	Value   string `yaml:"Value"` // want `yaml\(camel\): got 'Value' want 'value'`
 	More    string `json:"-"`
-	Also    string `json:",omitempty"` // want `json\(camel\): got '' want 'also'`
+	Also    string `json:",omitempty"`
 	ReqPerS string `avro:"req_per_s"`
 }

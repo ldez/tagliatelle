@@ -90,6 +90,11 @@ func analyze(pass *analysis.Pass, rules map[string]string, n *ast.StructType, fi
 			continue
 		}
 
+		if value == "" {
+			// skip empty value, it can change in the future
+			continue
+		}
+
 		converter, err := getConverter(convName)
 		if err != nil {
 			pass.Reportf(n.Pos(), "%s(%s): %v", key, convName, err)
