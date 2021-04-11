@@ -15,17 +15,23 @@ import (
 	"golang.org/x/tools/go/ast/inspector"
 )
 
+// Config the tagliatelle configuration.
+type Config struct {
+	Rules        map[string]string
+	UseFieldName bool
+}
+
 // New creates an analyzer.
-func New(rules map[string]string) *analysis.Analyzer {
+func New(config Config) *analysis.Analyzer {
 	return &analysis.Analyzer{
 		Name: "tagliatelle",
 		Doc:  "Checks the struct tags.",
 		Run: func(pass *analysis.Pass) (interface{}, error) {
-			if len(rules) == 0 {
+			if len(config.Rules) == 0 {
 				return nil, nil
 			}
 
-			return run(pass, rules)
+			return run(pass, config)
 		},
 		Requires: []*analysis.Analyzer{
 			inspect.Analyzer,
@@ -33,7 +39,7 @@ func New(rules map[string]string) *analysis.Analyzer {
 	}
 }
 
-func run(pass *analysis.Pass, rules map[string]string) (interface{}, error) {
+func run(pass *analysis.Pass, config Config) (interface{}, error) {
 	isp, ok := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	if !ok {
 		return nil, errors.New("missing inspect analyser")
@@ -50,14 +56,14 @@ func run(pass *analysis.Pass, rules map[string]string) (interface{}, error) {
 		}
 
 		for _, field := range node.Fields.List {
-			analyze(pass, rules, node, field)
+			analyze(pass, config, node, field)
 		}
 	})
 
 	return nil, nil
 }
 
-func analyze(pass *analysis.Pass, rules map[string]string, n *ast.StructType, field *ast.Field) {
+func analyze(pass *analysis.Pass, config Config, n *ast.StructType, field *ast.Field) {
 	if n.Fields == nil || n.Fields.NumFields() < 1 {
 		// skip empty structs
 		return
@@ -74,7 +80,7 @@ func analyze(pass *analysis.Pass, rules map[string]string, n *ast.StructType, fi
 		return
 	}
 
-	for key, convName := range rules {
+	for key, convName := range config.Rules {
 		if convName == "" {
 			continue
 		}
@@ -101,8 +107,13 @@ func analyze(pass *analysis.Pass, rules map[string]string, n *ast.StructType, fi
 			continue
 		}
 
-		if value != converter(fieldName) {
-			pass.Reportf(field.Tag.Pos(), "%s(%s): got '%s' want '%s'", key, convName, value, converter(fieldName))
+		expected := value
+		if config.UseFieldName {
+			expected = fieldName
+		}
+
+		if value != converter(expected) {
+			pass.Reportf(field.Tag.Pos(), "%s(%s): got '%s' want '%s'", key, convName, value, converter(expected))
 		}
 	}
 }

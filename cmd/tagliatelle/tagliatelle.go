@@ -6,13 +6,16 @@ import (
 )
 
 func main() {
-	rules := map[string]string{
-		"json": "camel",
-		"yaml": "camel",
-		"xml":  "camel",
-		"bson": "camel",
-		"avro": "snake",
+	cfg := tagliatelle.Config{
+		Rules: map[string]string{
+			"json": "camel",
+			"yaml": "camel",
+			"xml":  "camel",
+			"bson": "camel",
+			"avro": "snake",
+		},
+		UseFieldName: true,
 	}
 
-	singlechecker.Main(tagliatelle.New(rules))
+	singlechecker.Main(tagliatelle.New(cfg))
 }
