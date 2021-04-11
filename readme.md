@@ -3,7 +3,7 @@
 [![Sponsor](https://img.shields.io/badge/Sponsor%20me-%E2%9D%A4%EF%B8%8F-pink)](https://github.com/sponsors/ldez)
 [![Build Status](https://github.com/ldez/tagliatelle/workflows/Main/badge.svg?branch=master)](https://github.com/ldez/tagliatelle/actions)
 
-A linter that handle struct tags.
+A linter that handles struct tags.
 
 Supported string casing:
 
