@@ -21,6 +21,10 @@ func New(rules map[string]string) *analysis.Analyzer {
 		Name: "tagliatelle",
 		Doc:  "Checks the struct tags.",
 		Run: func(pass *analysis.Pass) (interface{}, error) {
+			if len(rules) == 0 {
+				return nil, nil
+			}
+
 			return run(pass, rules)
 		},
 		Requires: []*analysis.Analyzer{
@@ -72,7 +76,6 @@ func analyze(pass *analysis.Pass, rules map[string]string, n *ast.StructType, fi
 
 	for key, convName := range rules {
 		if convName == "" {
-			pass.Reportf(n.Pos(), "%s: case type is missing ", key)
 			continue
 		}
 

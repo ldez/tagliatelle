@@ -16,8 +16,9 @@ type Bar struct {
 }
 
 type Bir struct {
-	Name  string `json:"-"`
-	Value string `json:"value"`
+	Name             string   `json:"-"`
+	Value            string   `json:"value"`
+	ReplaceAllowList []string `mapstructure:"replace-allow-list"`
 }
 
 type Bur struct {
