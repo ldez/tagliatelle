@@ -10,11 +10,11 @@ Supported string casing:
 - `camel`
 - `pascal`
 - `kebab`
-- `smake`
+- `snake`
 - `goCamel`
 - `goPascal`
 - `goKebab`
-- `goSmake`
+- `goSnake`
 - `upper`
 - `lower`
 
