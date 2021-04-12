@@ -18,18 +18,58 @@ Supported string casing:
 - `upper`
 - `lower`
 
-| Source         | Snake Case       | Kebab Case       | Pascal Case    | Camel Case     | Go Pascal Case | Go Camel Case  | Go Snake Case    | Go KebabCase     |
-|----------------|------------------|------------------|----------------|----------------|----------------|----------------|------------------|------------------|
-| GooID          | goo_id           | goo-id           | GooId          | gooId          | gooID          | GooID          | goo_ID           | goo-ID           |
-| HTTPStatusCode | http_status_code | http-status-code | HttpStatusCode | httpStatusCode | httpStatusCode | HTTPStatusCode | HTTP_status_code | HTTP-status-code |
-| FooBAR         | foo_bar          | foo-bar          | FooBar         | fooBar         | fooBar         | FooBar         | foo_bar          | foo-bar          |
-| URL            | url              | url              | Url            | url            | url            | URL            | URL              | URL              |
-| ID             | id               | id               | Id             | id             | id             | ID             | ID               | ID               |
-| hostIP         | host_ip          | host-ip          | HostIp         | hostIp         | hostIP         | HostIP         | host_IP          | host-IP          |
-| JSON           | json             | json             | Json           | json           | json           | JSON           | JSON             | JSON             |
-| JSONName       | json_name        | json-name        | JsonName       | jsonName       | jsonName       | JSONName       | JSON_name        | JSON-name        |
-| NameJSON       | name_json        | name-json        | NameJson       | nameJson       | nameJSON       | NameJSON       | name_JSON        | name-JSON        |
-| UneTête        | une_tête         | une-tête         | UneTête        | uneTête        | uneTête        | UneTête        | une_tête         | une-tête         |
+| Source         | Camel Case     | Go Camel Case  |
+|----------------|----------------|----------------|
+| GooID          | gooId          | gooID          |
+| HTTPStatusCode | httpStatusCode | httpStatusCode |
+| FooBAR         | fooBar         | fooBar         |
+| URL            | url            | url            |
+| ID             | id             | id             |
+| hostIP         | hostIp         | hostIP         |
+| JSON           | json           | json           |
+| JSONName       | jsonName       | jsonName       |
+| NameJSON       | nameJson       | nameJSON       |
+| UneTête        | uneTête        | uneTête        |
+
+| Source         | Pascal Case    | Go Pascal Case |
+|----------------|----------------|----------------|
+| GooID          | GooId          | GooID          |
+| HTTPStatusCode | HttpStatusCode | HTTPStatusCode |
+| FooBAR         | FooBar         | FooBar         |
+| URL            | Url            | URL            |
+| ID             | Id             | ID             |
+| hostIP         | HostIp         | HostIP         |
+| JSON           | Json           | JSON           |
+| JSONName       | JsonName       | JSONName       |
+| NameJSON       | NameJson       | NameJSON       |
+| UneTête        | UneTête        | UneTête        |
+
+| Source         | Snake Case       | Go Snake Case    |
+|----------------|------------------|------------------|
+| GooID          | goo_id           | goo_ID           |
+| HTTPStatusCode | http_status_code | HTTP_status_code |
+| FooBAR         | foo_bar          | foo_bar          |
+| URL            | url              | URL              |
+| ID             | id               | ID               |
+| hostIP         | host_ip          | host_IP          |
+| JSON           | json             | JSON             |
+| JSONName       | json_name        | JSON_name        |
+| NameJSON       | name_json        | name_JSON        |
+| UneTête        | une_tête         | une_tête         |
+
+| Source         | Kebab Case       | Go KebabCase     |
+|----------------|------------------|------------------|
+| GooID          | goo-id           | goo-ID           |
+| HTTPStatusCode | http-status-code | HTTP-status-code |
+| FooBAR         | foo-bar          | foo-bar          |
+| URL            | url              | URL              |
+| ID             | id               | ID               |
+| hostIP         | host-ip          | host-IP          |
+| JSON           | json             | JSON             |
+| JSONName       | json-name        | JSON-name        |
+| NameJSON       | name-json        | name-JSON        |
+| UneTête        | une-tête         | une-tête         |
+
 
 ## Examples
 
