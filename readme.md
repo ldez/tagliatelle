@@ -11,10 +11,10 @@ Supported string casing:
 - `pascal`
 - `kebab`
 - `snake`
-- `goCamel`
-- `goPascal`
-- `goKebab`
-- `goSnake`
+- `goCamel` Respects Go's common initialisms (e.g. HttpResponse -> HTTPResponse).
+- `goPascal` Respects Go's common initialisms (e.g. HttpResponse -> HTTPResponse).
+- `goKebab` Respects Go's common initialisms (e.g. HttpResponse -> HTTPResponse).
+- `goSnake` Respects Go's common initialisms (e.g. HttpResponse -> HTTPResponse).
 - `upper`
 - `lower`
 
