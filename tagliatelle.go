@@ -9,6 +9,8 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/ldez/tagliatelle/filedtype"
+
 	"github.com/ettle/strcase"
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -79,42 +81,53 @@ func analyze(pass *analysis.Pass, config Config, n *ast.StructType, field *ast.F
 		pass.Reportf(n.Pos(), "unable to get field name: %v", err)
 		return
 	}
+	fieldTypes := getFieldTypes(field.Type)
+	if len(fieldTypes) < 1 {
+		bytes, _ := json.Marshal(field.Type)
+		errString := fmt.Errorf("unexpected eror: type %T: %s", field.Type, string(bytes))
+		pass.Reportf(n.Pos(), "unable to get field type: %v", errString)
+		return
+	}
 
 	for key, convName := range config.Rules {
 		if convName == "" {
 			continue
 		}
+		baseLint(pass, config, n, field.Tag, fieldName, key, convName)
+		//gin.Lint(pass, field.Tag, fieldTypes, key, convName)
+	}
+}
 
-		value, ok := lookupTagValue(field.Tag, key)
-		if !ok {
-			// skip when no struct tag for the key
-			continue
-		}
+func baseLint(pass *analysis.Pass, config Config, n *ast.StructType, tag *ast.BasicLit, fieldName, key, convName string) {
+	value, ok := lookupTagValue(tag, key)
+	if !ok {
+		// skip when no struct tag for the key
+		return
+	}
 
-		if value == "-" {
-			// skip when skipped :)
-			continue
-		}
+	if value == "-" {
+		// skip when skipped :)
+		return
+	}
 
-		if value == "" {
-			// skip empty value, it can change in the future
-			continue
-		}
+	if value == "" {
+		// skip empty value, it can change in the future
+		return
+	}
 
-		converter, err := getConverter(convName)
-		if err != nil {
-			pass.Reportf(n.Pos(), "%s(%s): %v", key, convName, err)
-			continue
-		}
+	converter, err := getConverter(convName)
+	if err != nil {
+		pass.Reportf(n.Pos(), "%s(%s): %v", key, convName, err)
+		return
+	}
 
-		expected := value
-		if config.UseFieldName {
-			expected = fieldName
-		}
+	expected := value
+	if config.UseFieldName {
+		expected = fieldName
+	}
 
-		if value != converter(expected) {
-			pass.Reportf(field.Tag.Pos(), "%s(%s): got '%s' want '%s'", key, convName, value, converter(expected))
-		}
+	if value != converter(expected) {
+		pass.Reportf(tag.Pos(), "%s(%s): got '%s' want '%s'", key, convName, value, converter(expected))
 	}
 }
 
@@ -144,6 +157,25 @@ func getTypeName(exp ast.Expr) (string, error) {
 	default:
 		bytes, _ := json.Marshal(exp)
 		return "", fmt.Errorf("unexpected eror: type %T: %s", typ, string(bytes))
+	}
+}
+
+func getFieldTypes(exp ast.Expr) []filedtype.FiledType {
+	switch typ := exp.(type) {
+	case *ast.Ident:
+		return []filedtype.FiledType{filedtype.Parse(typ.Name)}
+	case *ast.StarExpr:
+		return append([]filedtype.FiledType{filedtype.Ptr}, getFieldTypes(typ.X)...)
+	case *ast.ArrayType:
+		return append([]filedtype.FiledType{filedtype.Array}, getFieldTypes(typ.Elt)...)
+	case *ast.SliceExpr:
+		return append([]filedtype.FiledType{filedtype.Slice}, getFieldTypes(typ.X)...)
+	case *ast.MapType:
+		return append([]filedtype.FiledType{filedtype.Map}, getFieldTypes(typ.Value)...)
+	case *ast.SelectorExpr:
+		return getFieldTypes(typ.X)
+	default:
+		return nil
 	}
 }
 
