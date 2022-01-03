@@ -24,3 +24,34 @@ func TestAnalyzer(t *testing.T) {
 
 	analysistest.RunWithSuggestedFixes(t, testdata, tagliatelle.New(cfg), "a")
 }
+
+func TestAnalyzerGin(t *testing.T) {
+	testdata := analysistest.TestData()
+	t.Run("Gin-camel", func(t *testing.T) {
+		cfg := tagliatelle.Config{
+			Rules: map[string]string{
+				"binding": "camel",
+			},
+			UseFieldName: true,
+		}
+		analysistest.RunWithSuggestedFixes(t, testdata, tagliatelle.New(cfg), "gin_camel")
+	})
+	t.Run("Gin-snake", func(t *testing.T) {
+		cfg := tagliatelle.Config{
+			Rules: map[string]string{
+				"binding": "snake",
+			},
+			UseFieldName: true,
+		}
+		analysistest.RunWithSuggestedFixes(t, testdata, tagliatelle.New(cfg), "gin_snake")
+	})
+	t.Run("Gin-kebab", func(t *testing.T) {
+		cfg := tagliatelle.Config{
+			Rules: map[string]string{
+				"binding": "kebab",
+			},
+			UseFieldName: true,
+		}
+		analysistest.RunWithSuggestedFixes(t, testdata, tagliatelle.New(cfg), "gin_kebab")
+	})
+}
