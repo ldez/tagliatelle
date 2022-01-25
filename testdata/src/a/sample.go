@@ -7,6 +7,7 @@ type Foo struct {
 	Value  string `json:"value,omitempty"`
 	Bar    Bar    `json:"bar"`
 	Bur    `json:"bur"`
+	Quux   Quux `json:",inline"`
 }
 
 type Bar struct {
@@ -27,4 +28,8 @@ type Bur struct {
 	More    string `json:"-"`
 	Also    string `json:",omitempty"` // want `json\(camel\): got 'Also' want 'also'`
 	ReqPerS string `avro:"req_per_s"`
+}
+
+type Quux struct {
+	Data []byte `json:"data"`
 }
