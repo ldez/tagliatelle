@@ -85,7 +85,7 @@ func analyze(pass *analysis.Pass, config Config, n *ast.StructType, field *ast.F
 			continue
 		}
 
-		value, ok := lookupTagValue(field.Tag, key)
+		value, flags, ok := lookupTagValue(field.Tag, key)
 		if !ok {
 			// skip when no struct tag for the key
 			continue
@@ -93,6 +93,10 @@ func analyze(pass *analysis.Pass, config Config, n *ast.StructType, field *ast.F
 
 		if value == "-" {
 			// skip when skipped :)
+			continue
+		}
+		if hasTagFlag(flags, "inline") {
+			// skip for inline children (no name to lint)
 			continue
 		}
 
@@ -142,25 +146,35 @@ func getTypeName(exp ast.Expr) (string, error) {
 		return getTypeName(typ.Sel)
 	default:
 		bytes, _ := json.Marshal(exp)
-		return "", fmt.Errorf("unexpected eror: type %T: %s", typ, string(bytes))
+		return "", fmt.Errorf("unexpected error: type %T: %s", typ, string(bytes))
 	}
 }
 
-func lookupTagValue(tag *ast.BasicLit, key string) (string, bool) {
+func lookupTagValue(tag *ast.BasicLit, key string) (name string, flags []string, ok bool) {
 	raw := strings.Trim(tag.Value, "`")
 
 	value, ok := reflect.StructTag(raw).Lookup(key)
 	if !ok {
-		return value, ok
+		return value, nil, ok
 	}
 
 	values := strings.Split(value, ",")
 
 	if len(values) < 1 {
-		return "", true
+		return "", nil, true
 	}
 
-	return values[0], true
+	return values[0], values[1:], true
+}
+
+func hasTagFlag(flags []string, query string) bool {
+	for _, flag := range flags {
+		if flag == query {
+			return true
+		}
+	}
+
+	return false
 }
 
 func getConverter(c string) (func(s string) string, error) {
