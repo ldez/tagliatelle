@@ -7,7 +7,9 @@ type Foo struct {
 	Value  string `json:"value,omitempty"`
 	Bar    Bar    `json:"bar"`
 	Bur    `json:"bur"`
-	Quux   Quux `json:",inline"`
+
+	Qiix Quux `json:",inline"`
+	Quux `json:",inline"`
 }
 
 type Bar struct {

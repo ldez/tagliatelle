@@ -95,6 +95,11 @@ func analyze(pass *analysis.Pass, config Config, n *ast.StructType, field *ast.F
 			// skip when skipped :)
 			continue
 		}
+
+		// TODO(ldez): need to be rethink.
+		// This is an exception because of a bug.
+		// https://github.com/ldez/tagliatelle/issues/8
+		// For now, tagliatelle should try to remain neutral in terms of format.
 		if hasTagFlag(flags, "inline") {
 			// skip for inline children (no name to lint)
 			continue
