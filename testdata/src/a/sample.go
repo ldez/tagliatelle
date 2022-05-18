@@ -35,3 +35,18 @@ type Bur struct {
 type Quux struct {
 	Data []byte `json:"data"`
 }
+
+// MessedUpTags is to validate structtag validation is done
+// without it, the tool could let think everything is ok, while it's not.
+// We could validate more usecases, but we don't as everything is already validated
+// by analysis/passes/structtag unit tests.
+type MessedUpTags struct {
+	// an invalid tag listed in the rule is supported.
+	Bad string `json:"bad` // want "struct field tag `json:\"bad` not compatible with reflect.StructTag.Get: bad syntax for struct tag value"
+
+	// an invalid tag not in the rule is supported.
+	Whatever string `foo:whatever` // want "struct field tag `foo:whatever` not compatible with reflect.StructTag.Get: bad syntax for struct tag value"
+
+	// a invalid tag supported by the rule, is not hidden by another broken tag
+	Mixed string `json:"mixed" foo:mixed` // want "struct field tag `json:\"mixed\" foo:mixed` not compatible with reflect.StructTag.Get: bad syntax for struct tag value"
+}
