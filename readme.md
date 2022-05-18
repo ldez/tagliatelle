@@ -70,7 +70,6 @@ Supported string casing:
 | NameJSON       | name-json        | name-JSON        |
 | UneTête        | une-tête         | une-tête         |
 
-
 ## Examples
 
 ```go
@@ -81,4 +80,81 @@ type Foo struct {
     Name   string `json:"name"`
     Value  string `json:"val,omitempty"`// must be "value"
 }
+```
+
+## What this tool is about
+
+This tool is about validating tags according to rules you define.
+The tool also allows to fix tags according to the rules you defined.
+
+This tool is not intended to validate the fact a tag in valid or not.
+To do that, you can use `go vet`, or use [golangci-lint](https://golangci-lint.run) ["go vet"](https://golangci-lint.run/usage/linters/#govet) linter.
+
+## How to use the tool
+
+### As a golangci-lint linter
+
+Define the rules, you want via your [golangci-lint](https://golangci-lint.run) configuration file:
+
+```yaml
+linters-settings:
+  tagliatelle:
+    # Check the struck tag name case.
+    case:
+      # Use the struct field name to check the name of the struct tag.
+      # Default: false
+      use-field-name: true
+      rules:
+        # Any struct tag type can be used.
+        # Support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
+        json: camel
+        yaml: camel
+        xml: camel
+```
+
+More information here https://golangci-lint.run/usage/linters/#tagliatelle
+
+### Install and run it from the binary
+
+Not recommended.
+
+```shell
+go install github.com/ldez/tagliatelle/cmd/tagliatelle@latest
+```
+
+then launch it manually.
+
+## Rules
+
+Here are the default rules for the well known and used tags, when using tagliatelle as a binary or [golangci-lint linter](https://golangci-lint.run/usage/linters/#tagliatelle):
+
+- `json`: `camel`
+- `yaml`: `camel`
+- `xml`:  `camel`
+- `bson`: `camel`
+- `avro`: `snake`
+
+### Custom Rules
+
+The tool is not limited to the tags used in example, you can use it to validate any tag.
+
+You can add your own tag, for example `whatever` and tells the tool you want to use `kebab`.
+
+This option is only available via [golangci-lint](https://golangci-lint.run).
+
+```yaml
+linters-settings:
+  tagliatelle:
+    # Check the struck tag name case.
+    case:
+      # Use the struct field name to check the name of the struct tag.
+      # Default: false
+      use-field-name: true
+      rules:
+        # Any struct tag type can be used.
+        # Support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
+        json:     camel
+        yaml:     camel
+        xml:      camel
+        whatever: kebab
 ```
