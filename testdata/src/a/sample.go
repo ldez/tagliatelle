@@ -35,3 +35,16 @@ type Bur struct {
 type Quux struct {
 	Data []byte `json:"data"`
 }
+
+// MessedUpTags struct is to validate the tool is not doing any validation about invalid tags.
+// Please read the readme about this choice.
+type MessedUpTags struct {
+	// an invalid tag cannot be validated.
+	Bad string `json:"bad`
+
+	// a tag not supported by the rules is not validated.
+	Whatever string `foo:whatever`
+
+	// a tag supported by the rule cannot be validated because foo tag breaks the whole tags block
+	Mixed string `json:"mixed" foo:mixed`
+}
