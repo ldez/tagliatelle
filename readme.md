@@ -85,70 +85,16 @@ type Foo struct {
 ## What this tool is about
 
 This tool is about validating tags according to rules you define.
-
 The tool also allows to fix tags according to the rules you defined.
 
-## What this tool is not
-
 This tool is not intended to validate the fact a tag in valid or not.
-
-To do that, you can use `go vet`, or use golangci "go vet" linter.
-
-More information about it here: <https://golangci-lint.run/usage/linters/#govet>
+To do that, you can use `go vet`, or use [golangci-lint](https://golangci-lint.run) ["go vet"](https://golangci-lint.run/usage/linters/#govet) linter.
 
 ## How to use the tool
 
-### Install and run it from the binary
+### As a golangci-lint linter
 
-```shell
-go install github.com/ldez/tagliatelle/cmd/tagliatelle@latest
-```
-
-then launch it manually:
-
-```text
-tagliatelle: Checks the struct tags.
-
-Usage: tagliatelle [-flag] [package]
-
-Flags:
-  -V print version and exit
-  -c int
-     display offending line with this many lines of context (default -1)
-  -cpuprofile string
-     write CPU profile to this file
-  -debug string
-     debug flags, any subset of "fpstv"
-  -fix
-     apply all suggested fixes
-  -flags
-     print analyzer flags in JSON
-  -json
-     emit JSON output
-  -memprofile string
-     write memory profile to this file
-  -trace string
-     write trace log to this file
-```
-
-Deprecated flags:
-
-The following flags were available in previous versions of the tools, they are now deprecated
-
-```text
-Flags:
-  -all
-     no effect (deprecated)
-  -source
-     no effect (deprecated)
-  -tags string
-     no effect (deprecated)
-  -v no effect (deprecated)
-```
-
-### As a golangci linter
-
-Define the rules, you want via your golangci configuration file
+Define the rules, you want via your [golangci-lint](https://golangci-lint.run) configuration file:
 
 ```yaml
 linters-settings:
@@ -166,44 +112,35 @@ linters-settings:
         xml: camel
 ```
 
-More information here <https://golangci-lint.run/usage/linters/#tagliatelle>
+More information here https://golangci-lint.run/usage/linters/#tagliatelle
 
-Then either enable tagliatelle by passing it on demand.
+### Install and run it from the binary
+
+Not recommended.
 
 ```shell
-golangci run --enable tagliatelle
+go install github.com/ldez/tagliatelle/cmd/tagliatelle@latest
 ```
 
-or enable it directly via golangci configuration file, by adding this
-
-```yaml
-linters:
-    enable:
-      - tagliatelle
-```
-
-Please note, these examples are provided in yaml format.
-
-GolangCI also supports other formats, please refer to [golangci.run](https://golangci-lint.run/)
-for a more complete documentation.
+then launch it manually.
 
 ## Rules
 
-Here are the default rules for the well known and used tags, when using tagliatelle as a binary or golangci
+Here are the default rules for the well known and used tags, when using tagliatelle as a binary or [golangci-lint linter](https://golangci-lint.run/usage/linters/#tagliatelle):
 
-- json: "camel"
-- yaml: "camel"
-- xml:  "camel"
-- bson: "camel"
-- avro: "snake"
+- `json`: `camel`
+- `yaml`: `camel`
+- `xml`:  `camel`
+- `bson`: `camel`
+- `avro`: `snake`
 
 ### Custom Rules
 
 The tool is not limited to the tags used in example, you can use it to validate any tag.
 
-You can add your own tag, for example "whatever" and tells the tool you want to use "kebab"
+You can add your own tag, for example `whatever` and tells the tool you want to use `kebab`.
 
-This option is only available via golangci linter.
+This option is only available via [golangci-lint](https://golangci-lint.run).
 
 ```yaml
 linters-settings:
@@ -221,30 +158,3 @@ linters-settings:
         xml:      camel
         whatever: kebab
 ```
-
-Source
-
-```go
-// json and camel case
-type Foo struct {
-    ID     string `json:"ID"` // must be "id"
-    UserID string `json:"UserID" whatever:"userid"`// json must be "userId", but whatever must be "user-id"
-    Name   string `json:"name"`
-    Value  string `json:"val,omitempty"`// must be "value"
-}
-```
-
-Expected
-
-```go
-type Foo struct {
-    ID     string `json:"id"`
-    UserID string `json:"userId" whatever:"user-id"`
-    Name   string `json:"name"`
-    Value  string `json:"value,omitempty"`
-}
-```
-
-## Maintainers
-
-- Ludovic Fernandez [ldez](https://github.com/ldez)
