@@ -50,6 +50,10 @@ linters:
     - maligned # deprecated
     - interfacer # deprecated
     - scopelint # deprecated
+    - exhaustivestruct # deprecated
+    - ifshort # deprecated
+    - nosnakecase # deprecated
+    - structcheck # deprecated
     - sqlclosecheck # not relevant (SQL)
     - rowserrcheck # not relevant (SQL)
     - execinquery # not relevant (SQL)
@@ -62,7 +66,6 @@ linters:
     - goerr113
     - wrapcheck
     - exhaustive
-    - exhaustivestruct
     - exhaustruct
     - testpackage
     - tparallel
