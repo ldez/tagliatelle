@@ -147,6 +147,7 @@ Here are the default rules for the well known and used tags, when using tagliate
 - `xml`: `camel`
 - `bson`: `camel`
 - `avro`: `snake`
+- `header`: `header`
 
 ### Custom Rules
 
