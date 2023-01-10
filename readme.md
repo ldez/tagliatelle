@@ -20,7 +20,7 @@ Supported string casing:
 - `lower`
 
 | Source         | Camel Case     | Go Camel Case  |
-| -------------- | -------------- | -------------- |
+|----------------|----------------|----------------|
 | GooID          | gooId          | gooID          |
 | HTTPStatusCode | httpStatusCode | httpStatusCode |
 | FooBAR         | fooBar         | fooBar         |
@@ -33,7 +33,7 @@ Supported string casing:
 | UneTête        | uneTête        | uneTête        |
 
 | Source         | Pascal Case    | Go Pascal Case |
-| -------------- | -------------- | -------------- |
+|----------------|----------------|----------------|
 | GooID          | GooId          | GooID          |
 | HTTPStatusCode | HttpStatusCode | HTTPStatusCode |
 | FooBAR         | FooBar         | FooBar         |
@@ -46,7 +46,7 @@ Supported string casing:
 | UneTête        | UneTête        | UneTête        |
 
 | Source         | Snake Case       | Go Snake Case    |
-| -------------- | ---------------- | ---------------- |
+|----------------|------------------|------------------|
 | GooID          | goo_id           | goo_ID           |
 | HTTPStatusCode | http_status_code | HTTP_status_code |
 | FooBAR         | foo_bar          | foo_bar          |
@@ -58,18 +58,31 @@ Supported string casing:
 | NameJSON       | name_json        | name_JSON        |
 | UneTête        | une_tête         | une_tête         |
 
-| Source         | Kebab Case       | Go KebabCase     | Header Case      |
-| -------------- | ---------------- | ---------------- | ---------------- |
-| GooID          | goo-id           | goo-ID           | Goo-Id           |
-| HTTPStatusCode | http-status-code | HTTP-status-code | Http-Status-Code |
-| FooBAR         | foo-bar          | foo-bar          | Foo-Bar          |
-| URL            | url              | URL              | Url              |
-| ID             | id               | ID               | Id               |
-| hostIP         | host-ip          | host-IP          | Host-Ip          |
-| JSON           | json             | JSON             | Json             |
-| JSONName       | json-name        | JSON-name        | Json-Name        |
-| NameJSON       | name-json        | name-JSON        | Name-Json        |
-| UneTête        | une-tête         | une-tête         | Une-Tête         |
+| Source         | Kebab Case       | Go KebabCase     |
+|----------------|------------------|------------------|
+| GooID          | goo-id           | goo-ID           |
+| HTTPStatusCode | http-status-code | HTTP-status-code |
+| FooBAR         | foo-bar          | foo-bar          |
+| URL            | url              | URL              |
+| ID             | id               | ID               |
+| hostIP         | host-ip          | host-IP          |
+| JSON           | json             | JSON             |
+| JSONName       | json-name        | JSON-name        |
+| NameJSON       | name-json        | name-JSON        |
+| UneTête        | une-tête         | une-tête         |
+
+| Source         | Header Case      |
+|----------------|------------------|
+| GooID          | Goo-Id           |
+| HTTPStatusCode | Http-Status-Code |
+| FooBAR         | Foo-Bar          |
+| URL            | Url              |
+| ID             | Id               |
+| hostIP         | Host-Ip          |
+| JSON           | Json             |
+| JSONName       | Json-Name        |
+| NameJSON       | Name-Json        |
+| UneTête        | Une-Tête         |
 
 ## Examples
 
@@ -131,7 +144,7 @@ Here are the default rules for the well known and used tags, when using tagliate
 
 - `json`: `camel`
 - `yaml`: `camel`
-- `xml` : `camel`
+- `xml`: `camel`
 - `bson`: `camel`
 - `avro`: `snake`
 
