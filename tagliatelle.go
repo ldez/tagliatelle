@@ -200,6 +200,8 @@ func getConverter(c string) (func(s string) string, error) {
 		return strcase.ToGoKebab, nil
 	case "goSnake":
 		return strcase.ToGoSnake, nil
+	case "header":
+		return func(s string) string { return strcase.ToCase(s, strcase.TitleCase, '-') }, nil
 	case "upper":
 		return strings.ToUpper, nil
 	case "lower":
