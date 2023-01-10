@@ -25,11 +25,13 @@ type Bir struct {
 }
 
 type Bur struct {
-	Name    string
-	Value   string `yaml:"Value"` // want `yaml\(camel\): got 'Value' want 'value'`
-	More    string `json:"-"`
-	Also    string `json:",omitempty"` // want `json\(camel\): got 'Also' want 'also'`
-	ReqPerS string `avro:"req_per_s"`
+	Name             string
+	Value            string `yaml:"Value"` // want `yaml\(camel\): got 'Value' want 'value'`
+	More             string `json:"-"`
+	Also             string `json:",omitempty"` // want `json\(camel\): got 'Also' want 'also'`
+	ReqPerS          string `avro:"req_per_s"`
+	HeaderValue      string `header:"Header-Value"`
+	WrongHeaderValue string `header:"Header_Value"` // want `header\(header\): got 'Header_Value' want 'Wrong-Header-Value'`
 }
 
 type Quux struct {

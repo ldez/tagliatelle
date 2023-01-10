@@ -8,11 +8,12 @@ import (
 func main() {
 	cfg := tagliatelle.Config{
 		Rules: map[string]string{
-			"json": "camel",
-			"yaml": "camel",
-			"xml":  "camel",
-			"bson": "camel",
-			"avro": "snake",
+			"json":   "camel",
+			"yaml":   "camel",
+			"xml":    "camel",
+			"bson":   "camel",
+			"avro":   "snake",
+			"header": "header",
 		},
 		UseFieldName: true,
 	}
