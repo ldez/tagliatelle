@@ -15,6 +15,7 @@ Supported string casing:
 - `goPascal` Respects [Go's common initialisms](https://github.com/golang/lint/blob/83fdc39ff7b56453e3793356bcff3070b9b96445/lint.go#L770-L809) (e.g. HttpResponse -> HTTPResponse).
 - `goKebab` Respects [Go's common initialisms](https://github.com/golang/lint/blob/83fdc39ff7b56453e3793356bcff3070b9b96445/lint.go#L770-L809) (e.g. HttpResponse -> HTTPResponse).
 - `goSnake` Respects [Go's common initialisms](https://github.com/golang/lint/blob/83fdc39ff7b56453e3793356bcff3070b9b96445/lint.go#L770-L809) (e.g. HttpResponse -> HTTPResponse).
+- `header`
 - `upper`
 - `lower`
 
@@ -69,6 +70,19 @@ Supported string casing:
 | JSONName       | json-name        | JSON-name        |
 | NameJSON       | name-json        | name-JSON        |
 | UneTête        | une-tête         | une-tête         |
+
+| Source         | Header Case      |
+|----------------|------------------|
+| GooID          | Goo-Id           |
+| HTTPStatusCode | Http-Status-Code |
+| FooBAR         | Foo-Bar          |
+| URL            | Url              |
+| ID             | Id               |
+| hostIP         | Host-Ip          |
+| JSON           | Json             |
+| JSONName       | Json-Name        |
+| NameJSON       | Name-Json        |
+| UneTête        | Une-Tête         |
 
 ## Examples
 
@@ -130,9 +144,10 @@ Here are the default rules for the well known and used tags, when using tagliate
 
 - `json`: `camel`
 - `yaml`: `camel`
-- `xml`:  `camel`
+- `xml`: `camel`
 - `bson`: `camel`
 - `avro`: `snake`
+- `header`: `header`
 
 ### Custom Rules
 

@@ -18,6 +18,7 @@ func TestAnalyzer(t *testing.T) {
 			"bson":         "camel",
 			"avro":         "snake",
 			"mapstructure": "kebab",
+			"header":       "header",
 		},
 		UseFieldName: true,
 	}
