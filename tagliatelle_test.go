@@ -19,6 +19,7 @@ func TestAnalyzer(t *testing.T) {
 			"avro":         "snake",
 			"mapstructure": "kebab",
 			"header":       "header",
+			"envconfig":    "upperSnake",
 		},
 		UseFieldName: true,
 	}
