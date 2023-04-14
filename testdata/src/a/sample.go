@@ -34,6 +34,8 @@ type Bur struct {
 	WrongHeaderValue    string `header:"Header_Value"` // want `header\(header\): got 'Header_Value' want 'Wrong-Header-Value'`
 	EnvConfigValue      string `envconfig:"ENV_CONFIG_VALUE"`
 	WrongEnvConfigValue string `envconfig:"env_config_value"` // want `envconfig\(upperSnake\): got 'env_config_value' want 'WRONG_ENV_CONFIG_VALUE'`
+	EnvValue            string `env:"ENV_VALUE"`
+	WrongEnvValue       string `env:"env_value"` // want `env\(upperSnake\): got 'env_value' want 'WRONG_ENV_VALUE'`
 }
 
 type Quux struct {

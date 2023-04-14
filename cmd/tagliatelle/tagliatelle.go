@@ -15,6 +15,7 @@ func main() {
 			"avro":      "snake",
 			"header":    "header",
 			"envconfig": "upperSnake",
+			"env":       "upperSnake",
 		},
 		UseFieldName: true,
 	}

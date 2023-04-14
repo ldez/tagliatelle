@@ -149,6 +149,7 @@ Here are the default rules for the well known and used tags, when using tagliate
 - `bson`: `camel`
 - `avro`: `snake`
 - `header`: `header`
+- `env`: `upperSnake`
 - `envconfig`: `upperSnake`
 
 ### Custom Rules

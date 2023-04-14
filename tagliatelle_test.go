@@ -20,6 +20,7 @@ func TestAnalyzer(t *testing.T) {
 			"mapstructure": "kebab",
 			"header":       "header",
 			"envconfig":    "upperSnake",
+			"env":          "upperSnake",
 		},
 		UseFieldName: true,
 	}
