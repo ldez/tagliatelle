@@ -25,13 +25,15 @@ type Bir struct {
 }
 
 type Bur struct {
-	Name             string
-	Value            string `yaml:"Value"` // want `yaml\(camel\): got 'Value' want 'value'`
-	More             string `json:"-"`
-	Also             string `json:",omitempty"` // want `json\(camel\): got 'Also' want 'also'`
-	ReqPerS          string `avro:"req_per_s"`
-	HeaderValue      string `header:"Header-Value"`
-	WrongHeaderValue string `header:"Header_Value"` // want `header\(header\): got 'Header_Value' want 'Wrong-Header-Value'`
+	Name                string
+	Value               string `yaml:"Value"` // want `yaml\(camel\): got 'Value' want 'value'`
+	More                string `json:"-"`
+	Also                string `json:",omitempty"` // want `json\(camel\): got 'Also' want 'also'`
+	ReqPerS             string `avro:"req_per_s"`
+	HeaderValue         string `header:"Header-Value"`
+	WrongHeaderValue    string `header:"Header_Value"` // want `header\(header\): got 'Header_Value' want 'Wrong-Header-Value'`
+	EnvConfigValue      string `envconfig:"ENV_CONFIG_VALUE"`
+	WrongEnvConfigValue string `envconfig:"env_config_value"` // want `envconfig\(upperSnake\): got 'env_config_value' want 'WRONG_ENV_CONFIG_VALUE'`
 }
 
 type Quux struct {
