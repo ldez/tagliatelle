@@ -97,6 +97,16 @@ type Foo struct {
 }
 ```
 
+If for some reason you really really want to override the rules
+only for a specific struct you can add a struct-level comment:
+
+```go
+// tagliatelle: json=camel yaml=snake
+type Foo struct {
+    ID     string `json:"ID"` // must be "id"
+}
+```
+
 ## What this tool is about
 
 This tool is about validating tags according to rules you define.

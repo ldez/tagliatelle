@@ -47,17 +47,38 @@ func run(pass *analysis.Pass, config Config) (interface{}, error) {
 
 	nodeFilter := []ast.Node{
 		(*ast.StructType)(nil),
+		(*ast.CommentGroup)(nil),
 	}
 
+	var structRules map[string]string
+
 	isp.Preorder(nodeFilter, func(n ast.Node) {
+		// look for comments that are updating the tagliatelle rules
+		// for the next struct and store them in structRules until
+		// we find a struct.
+		if commentNode, ok := n.(*ast.CommentGroup); ok {
+			structRules = parseComment(commentNode.Text())
+			return
+		}
+
 		node, ok := n.(*ast.StructType)
 		if !ok {
+			// clear the rules when we find a non-struct node
+			structRules = nil
 			return
+		}
+
+		// if we have rules from a comment, add them to the config
+		for key, convName := range structRules {
+			config.Rules[key] = convName
 		}
 
 		for _, field := range node.Fields.List {
 			analyze(pass, config, node, field)
 		}
+
+		// clear the rules after we've analyzed the struct
+		structRules = nil
 	})
 
 	return nil, nil
@@ -124,6 +145,29 @@ func analyze(pass *analysis.Pass, config Config, n *ast.StructType, field *ast.F
 			pass.Reportf(field.Tag.Pos(), "%s(%s): got '%s' want '%s'", key, convName, value, converter(expected))
 		}
 	}
+}
+
+// parseComment parse the comment and return the rules if any.
+func parseComment(comment string) map[string]string {
+	lines := strings.Split(comment, "\n")
+	for _, line := range lines {
+		if !strings.HasPrefix(line, "tagliatelle:") {
+			continue
+		}
+		line = strings.TrimPrefix(line, "tagliatelle:")
+		line = strings.TrimSpace(line)
+		rules := strings.Split(line, " ")
+		res := map[string]string{}
+		for _, rule := range rules {
+			parts := strings.Split(rule, "=")
+			if len(parts) != 2 {
+				continue
+			}
+			res[parts[0]] = parts[1]
+		}
+		return res
+	}
+	return nil
 }
 
 func getFieldName(field *ast.Field) (string, error) {

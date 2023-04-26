@@ -21,6 +21,8 @@ func TestAnalyzer(t *testing.T) {
 			"header":       "header",
 			"envconfig":    "upperSnake",
 			"env":          "upperSnake",
+			"foo":          "camel",
+			"bar":          "camel",
 		},
 		UseFieldName: true,
 	}

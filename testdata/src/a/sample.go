@@ -1,5 +1,10 @@
 package a
 
+// some random comment
+// the StructLevelRule* fields are both set to "camel", but should be
+// overridden by the following comment to "snake" and "upperSnake"
+// tagliatelle: foo=snake bar=upperSnake
+// some other random comment
 type Foo struct {
 	ID     string `json:"ID"`     // want `json\(camel\): got 'ID' want 'id'`
 	UserID string `json:"UserID"` // want `json\(camel\): got 'UserID' want 'userId'`
@@ -10,6 +15,9 @@ type Foo struct {
 
 	Qiix Quux `json:",inline"`
 	Quux `json:",inline"`
+
+	StructLevelRuleFoo string `foo:"struct_level_rule_foo"`
+	StructLevelRuleBar string `bar:"struct_level_rule_bar"` // want `bar\(upperSnake\): got 'struct_level_rule_bar' want 'STRUCT_LEVEL_RULE_BAR'`
 }
 
 type Bar struct {
