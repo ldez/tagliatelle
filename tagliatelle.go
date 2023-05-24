@@ -15,6 +15,10 @@ import (
 	"golang.org/x/tools/go/ast/inspector"
 )
 
+const (
+	nonEmptyRule = "non_empty"
+)
+
 // Config the tagliatelle configuration.
 type Config struct {
 	Rules        map[string]string
@@ -105,6 +109,10 @@ func analyze(pass *analysis.Pass, config Config, n *ast.StructType, field *ast.F
 			continue
 		}
 
+		if checkNonEmpty(pass, field, key, convName, value) {
+			continue
+		}
+
 		if value == "" {
 			value = fieldName
 		}
@@ -124,6 +132,16 @@ func analyze(pass *analysis.Pass, config Config, n *ast.StructType, field *ast.F
 			pass.Reportf(field.Tag.Pos(), "%s(%s): got '%s' want '%s'", key, convName, value, converter(expected))
 		}
 	}
+}
+
+func checkNonEmpty(pass *analysis.Pass, field *ast.Field, key, convName, value string) bool {
+	if convName != nonEmptyRule {
+		return false
+	}
+	if value == "" {
+		pass.Reportf(field.Tag.Pos(), "%s(%s): got '%s' want non empty", key, convName, value)
+	}
+	return true
 }
 
 func getFieldName(field *ast.Field) (string, error) {

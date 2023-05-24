@@ -8,14 +8,15 @@ import (
 func main() {
 	cfg := tagliatelle.Config{
 		Rules: map[string]string{
-			"json":      "camel",
-			"yaml":      "camel",
-			"xml":       "camel",
-			"bson":      "camel",
-			"avro":      "snake",
-			"header":    "header",
-			"envconfig": "upperSnake",
-			"env":       "upperSnake",
+			"yaml":         "camel",
+			"xml":          "camel",
+			"bson":         "camel",
+			"avro":         "snake",
+			"header":       "header",
+			"envconfig":    "upperSnake",
+			"env":          "upperSnake",
+			"mapstructure": "non_empty",
+			"json":         "non_empty",
 		},
 		UseFieldName: true,
 	}
