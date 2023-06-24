@@ -35,6 +35,7 @@ type Base struct {
 	Rules         map[string]string
 	UseFieldName  bool
 	IgnoredFields []string
+	Ignore        bool
 }
 
 // New creates an analyzer.
@@ -75,6 +76,10 @@ func run(pass *analysis.Pass, config Config) (interface{}, error) {
 
 		for _, field := range node.Fields.List {
 			_, v, _ := r.Root().LongestPrefix([]byte(path.Join(pass.Pkg.Path(), filepath.Base(pass.Fset.File(node.Pos()).Name()))))
+			if v.Ignore {
+				continue
+			}
+
 			analyze(pass, v, node, field)
 		}
 	})
@@ -253,6 +258,7 @@ func createRadixTree(config Config) *iradix.Tree[Base] {
 	defaultRule := Base{
 		Rules:        copyMap(config.Rules),
 		UseFieldName: config.UseFieldName,
+		Ignore:       config.Ignore,
 	}
 	defaultRule.IgnoredFields = append(defaultRule.IgnoredFields, config.IgnoredFields...)
 
@@ -262,6 +268,7 @@ func createRadixTree(config Config) *iradix.Tree[Base] {
 		c := Base{
 			Rules:        copyMap(config.Rules),
 			UseFieldName: override.UseFieldName,
+			Ignore:       override.Ignore,
 		}
 		c.IgnoredFields = append(c.IgnoredFields, config.IgnoredFields...)
 		c.IgnoredFields = append(c.IgnoredFields, override.IgnoredFields...)
