@@ -1,4 +1,4 @@
-package a
+package three
 
 type Foo struct {
 	ID     string `json:"ID"`     // want `json\(camel\): got 'ID' want 'id'`
