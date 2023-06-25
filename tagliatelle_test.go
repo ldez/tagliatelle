@@ -12,6 +12,8 @@ import (
 )
 
 func TestAnalyzer(t *testing.T) {
+	t.Setenv("MODINFO_DEBUG_DISABLE_ONCE", "true")
+
 	testCases := []struct {
 		desc     string
 		dir      string
@@ -20,8 +22,8 @@ func TestAnalyzer(t *testing.T) {
 	}{
 		{
 			desc:     "simple",
-			dir:      "one",
-			patterns: []string{"one"},
+			dir:      "example.com/one",
+			patterns: []string{"example.com/one"},
 			cfg: tagliatelle.Config{
 				Base: tagliatelle.Base{
 					Rules: map[string]string{
@@ -41,8 +43,8 @@ func TestAnalyzer(t *testing.T) {
 		},
 		{
 			desc:     "with non-applicable overrides",
-			dir:      "one",
-			patterns: []string{"one/..."},
+			dir:      "example.com/one",
+			patterns: []string{"example.com/one/..."},
 			cfg: tagliatelle.Config{
 				Base: tagliatelle.Base{
 					Rules: map[string]string{
@@ -74,8 +76,8 @@ func TestAnalyzer(t *testing.T) {
 		},
 		{
 			desc:     "with applicable overrides",
-			dir:      "two",
-			patterns: []string{"two/..."},
+			dir:      "example.com/two",
+			patterns: []string{"example.com/two/..."},
 			cfg: tagliatelle.Config{
 				Base: tagliatelle.Base{
 					Rules: map[string]string{
@@ -93,7 +95,7 @@ func TestAnalyzer(t *testing.T) {
 				},
 				Overrides: []tagliatelle.Overrides{
 					{
-						Package: "two/b",
+						Package: "b",
 						Base: tagliatelle.Base{
 							Rules: map[string]string{
 								"json": "upperSnake",
@@ -107,8 +109,8 @@ func TestAnalyzer(t *testing.T) {
 		},
 		{
 			desc:     "ignore",
-			dir:      "three",
-			patterns: []string{"three/..."},
+			dir:      "example.com/three",
+			patterns: []string{"example.com/three/..."},
 			cfg: tagliatelle.Config{
 				Base: tagliatelle.Base{
 					Rules: map[string]string{
@@ -126,7 +128,7 @@ func TestAnalyzer(t *testing.T) {
 				},
 				Overrides: []tagliatelle.Overrides{
 					{
-						Package: "three/b",
+						Package: "b",
 						Base: tagliatelle.Base{
 							Ignore: true,
 						},
