@@ -7,17 +7,19 @@ import (
 
 func main() {
 	cfg := tagliatelle.Config{
-		Rules: map[string]string{
-			"json":      "camel",
-			"yaml":      "camel",
-			"xml":       "camel",
-			"bson":      "camel",
-			"avro":      "snake",
-			"header":    "header",
-			"envconfig": "upperSnake",
-			"env":       "upperSnake",
+		Base: tagliatelle.Base{
+			Rules: map[string]string{
+				"json":      "camel",
+				"yaml":      "camel",
+				"xml":       "camel",
+				"bson":      "camel",
+				"avro":      "snake",
+				"header":    "header",
+				"envconfig": "upperSnake",
+				"env":       "upperSnake",
+			},
+			UseFieldName: true,
 		},
-		UseFieldName: true,
 	}
 
 	singlechecker.Main(tagliatelle.New(cfg))

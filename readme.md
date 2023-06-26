@@ -114,17 +114,107 @@ Define the rules, you want via your [golangci-lint](https://golangci-lint.run) c
 ```yaml
 linters-settings:
   tagliatelle:
-    # Check the struck tag name case.
+    # Check the struct tag name case.
     case:
       # Use the struct field name to check the name of the struct tag.
       # Default: false
       use-field-name: true
+      # Define the association between tag name and case.
+      # Any struct tag name can be used.
+      # Support string cases:
+      # - `camel`
+      # - `pascal`
+      # - `kebab`
+      # - `snake`
+      # - `upperSnake`
+      # - `goCamel`
+      # - `goPascal`
+      # - `goKebab`
+      # - `goSnake`
+      # - `upper`
+      # - `lower`
+      # - `header`
       rules:
-        # Any struct tag type can be used.
-        # Support string case: `camel`, `pascal`, `kebab`, `snake`, `upperSnake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`, `header`.
         json: camel
         yaml: camel
         xml: camel
+        whatever: snake
+        # The field names to ignore.
+        # Default: []
+      ignored-fields:
+        - Bar
+        - Foo
+      # Overrides the default/root configuration.
+      # Default: []
+      overrides:
+          # The package name. (uses `/` only)
+          # Require
+        - pkg: example.com/foo/bar
+          # Default: false or the same as the default/root configuration.
+          use-field-name: true
+          # Default: empty or the same as the default/root configuration.
+          rules:
+            json: snake
+            xml: pascal
+          # The field names to ignore.
+          # Default: {} or the same as the default/root configuration.
+          ignored-fields:
+            - Bar
+            - Foo
+          # Ignore the package (take the precedence over all other configuration.
+          # Default: false
+          ignore: true
+```
+
+#### Examples
+
+Overrides case rules for the package `foo/bar`:
+
+```yaml
+linters-settings:
+  tagliatelle:
+    case:
+      rules:
+        json: camel
+        yaml: camel
+        xml: camel
+      overrides:
+        - pkg: example.com/foo/bar
+          rules:
+            json: snake
+            xml: pascal
+```
+
+Ignore fields inside the package `foo/bar`:
+
+```yaml
+linters-settings:
+  tagliatelle:
+    case:
+      rules:
+        json: camel
+        yaml: camel
+        xml: camel
+      overrides:
+        - pkg: foo/bar
+          ignored-fields:
+            - Bar
+            - Foo
+```
+
+Ignore the package `foo/bar`:
+
+```yaml
+linters-settings:
+  tagliatelle:
+    case:
+      rules:
+        json: camel
+        yaml: camel
+        xml: camel
+      overrides:
+        - pkg: foo/bar
+          ignore: true
 ```
 
 More information here https://golangci-lint.run/usage/linters/#tagliatelle
