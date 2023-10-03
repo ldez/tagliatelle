@@ -123,8 +123,8 @@ linters-settings:
         # Any struct tag type can be used.
         # Support string case: `camel`, `pascal`, `kebab`, `snake`, `upperSnake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`, `header`.
         json: camel
-        xml: camel
         yaml: camel
+        xml: camel
         toml: camel
 ```
 
@@ -173,8 +173,8 @@ linters-settings:
         # Any struct tag type can be used.
         # Support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
         json: camel
-        xml: camel
         yaml: camel
+        xml: camel
         toml: camel
         whatever: kebab
 ```
