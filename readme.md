@@ -125,6 +125,7 @@ linters-settings:
         json: camel
         yaml: camel
         xml: camel
+        toml: camel
 ```
 
 More information here https://golangci-lint.run/usage/linters/#tagliatelle
@@ -171,8 +172,9 @@ linters-settings:
       rules:
         # Any struct tag type can be used.
         # Support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
-        json:     camel
-        yaml:     camel
-        xml:      camel
+        json: camel
+        yaml: camel
+        xml: camel
+        toml: camel
         whatever: kebab
 ```
