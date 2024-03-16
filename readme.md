@@ -126,6 +126,11 @@ linters-settings:
         yaml: camel
         xml: camel
         toml: camel
+        bson: camel
+        avro: snake
+        mapstructure: kebab
+        env: upperSnake
+        envconfig: upperSnake
 ```
 
 More information here https://golangci-lint.run/usage/linters/#tagliatelle
