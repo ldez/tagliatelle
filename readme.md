@@ -116,9 +116,6 @@ linters-settings:
   tagliatelle:
     # Check the struct tag name case.
     case:
-      # Use the struct field name to check the name of the struct tag.
-      # Default: false
-      use-field-name: true
       # Define the association between tag name and case.
       # Any struct tag name can be used.
       # Support string cases:
@@ -145,29 +142,33 @@ linters-settings:
         env: upperSnake
         envconfig: upperSnake
         whatever: snake
-        # The field names to ignore.
-        # Default: []
+      # Use the struct field name to check the name of the struct tag.
+      # Default: false
+      use-field-name: true
+      # The field names to ignore.
+      # Default: []
       ignored-fields:
         - Bar
         - Foo
       # Overrides the default/root configuration.
       # Default: []
       overrides:
+        -
           # The package name. (uses `/` only as separator)
-          # Require
-        - pkg: foo/bar
-          # Default: false or the same as the default/root configuration.
-          use-field-name: true
+          # Required (but it can be explicitly an empty value to target the root package)
+          pkg: foo/bar
           # Default: empty or the same as the default/root configuration.
           rules:
             json: snake
             xml: pascal
+          # Default: false or the same as the default/root configuration.
+          use-field-name: true
           # The field names to ignore.
-          # Default: {} or the same as the default/root configuration.
+          # Default: [] or the same as the default/root configuration.
           ignored-fields:
             - Bar
             - Foo
-          # Ignore the package (take the precedence over all other configuration.
+          # Ignore the package (it takes the precedence over all other configuration).
           # Default: false
           ignore: true
 ```
@@ -261,9 +262,6 @@ linters-settings:
   tagliatelle:
     # Check the struck tag name case.
     case:
-      # Use the struct field name to check the name of the struct tag.
-      # Default: false
-      use-field-name: true
       rules:
         # Any struct tag type can be used.
         # Support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
@@ -272,4 +270,7 @@ linters-settings:
         xml: camel
         toml: camel
         whatever: kebab
+      # Use the struct field name to check the name of the struct tag.
+      # Default: false
+      use-field-name: true
 ```
