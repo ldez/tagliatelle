@@ -6,9 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"go/ast"
+	"maps"
 	"path"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strings"
 
 	"github.com/ettle/strcase"
@@ -104,7 +106,7 @@ func analyze(pass *analysis.Pass, config Base, n *ast.StructType, field *ast.Fie
 		return
 	}
 
-	if contains(config.IgnoredFields, fieldName) {
+	if slices.Contains(config.IgnoredFields, fieldName) {
 		return
 	}
 
@@ -285,18 +287,6 @@ func createRadixTree(config Config, modPath string) *iradix.Tree[Base] {
 
 func copyMap[K, V comparable](m map[K]V) map[K]V {
 	c := make(map[K]V)
-	for k, v := range m {
-		c[k] = v
-	}
+	maps.Copy(c, m)
 	return c
-}
-
-func contains[T comparable](values []T, value T) bool {
-	for _, v := range values {
-		if v == value {
-			return true
-		}
-	}
-
-	return false
 }

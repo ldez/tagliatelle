@@ -12,8 +12,6 @@ import (
 )
 
 func TestAnalyzer(t *testing.T) {
-	t.Setenv("MODINFO_DEBUG_DISABLE_ONCE", "true")
-
 	testCases := []struct {
 		desc     string
 		dir      string
