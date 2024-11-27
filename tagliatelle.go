@@ -45,7 +45,7 @@ func New(config Config) *analysis.Analyzer {
 	return &analysis.Analyzer{
 		Name: "tagliatelle",
 		Doc:  "Checks the struct tags.",
-		Run: func(pass *analysis.Pass) (interface{}, error) {
+		Run: func(pass *analysis.Pass) (any, error) {
 			if len(config.Rules) == 0 && len(config.Overrides) == 0 {
 				return nil, nil
 			}
@@ -58,7 +58,7 @@ func New(config Config) *analysis.Analyzer {
 	}
 }
 
-func run(pass *analysis.Pass, config Config) (interface{}, error) {
+func run(pass *analysis.Pass, config Config) (any, error) {
 	isp, ok := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	if !ok {
 		return nil, errors.New("missing inspect analyser")
@@ -74,11 +74,11 @@ func run(pass *analysis.Pass, config Config) (interface{}, error) {
 		_, cfg, _ = radixTree.Root().LongestPrefix([]byte(pass.Pkg.Path()))
 	}
 
-	isp.Preorder(nodeFilter, func(n ast.Node) {
-		if cfg.Ignore {
-			return
-		}
+	if cfg.Ignore {
+		return nil, nil
+	}
 
+	isp.Preorder(nodeFilter, func(n ast.Node) {
 		node, ok := n.(*ast.StructType)
 		if !ok {
 			return
