@@ -161,7 +161,7 @@ linters-settings:
           rules:
             json: snake
             xml: pascal
-          # Default: false or the same as the default/root configuration.
+          # Default: false (WARNING: it doesn't follow the default/root configuration)
           use-field-name: true
           # The field names to ignore.
           # Default: [] or the same as the default/root configuration.
