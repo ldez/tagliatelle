@@ -265,19 +265,28 @@ func createRadixTree(config Config, modPath string) *iradix.Tree[Base] {
 		UseFieldName: config.UseFieldName,
 		Ignore:       config.Ignore,
 	}
+
 	defaultRule.IgnoredFields = append(defaultRule.IgnoredFields, config.IgnoredFields...)
 
 	r, _, _ = r.Insert([]byte(""), defaultRule)
 
 	for _, override := range config.Overrides {
 		c := Base{
-			Rules:        copyMap(config.Rules),
 			UseFieldName: override.UseFieldName,
 			Ignore:       override.Ignore,
 		}
-		c.IgnoredFields = append(c.IgnoredFields, config.IgnoredFields...)
-		c.IgnoredFields = append(c.IgnoredFields, override.IgnoredFields...)
 
+		// If there is an override the base configuration is ignored.
+		if len(override.IgnoredFields) == 0 {
+			c.IgnoredFields = append(c.IgnoredFields, config.IgnoredFields...)
+		} else {
+			c.IgnoredFields = append(c.IgnoredFields, override.IgnoredFields...)
+		}
+
+		// Copy the rules from the base.
+		c.Rules = copyMap(config.Rules)
+
+		// Overrides the rule from the base.
 		for k, v := range override.Rules {
 			c.Rules[k] = v
 		}
