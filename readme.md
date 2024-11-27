@@ -153,9 +153,9 @@ linters-settings:
       # Overrides the default/root configuration.
       # Default: []
       overrides:
-          # The package name. (uses `/` only)
+          # The package name. (uses `/` only as separator)
           # Require
-        - pkg: example.com/foo/bar
+        - pkg: foo/bar
           # Default: false or the same as the default/root configuration.
           use-field-name: true
           # Default: empty or the same as the default/root configuration.
@@ -185,7 +185,7 @@ linters-settings:
         yaml: camel
         xml: camel
       overrides:
-        - pkg: example.com/foo/bar
+        - pkg: foo/bar
           rules:
             json: snake
             xml: pascal

@@ -1,3 +1,3 @@
-module example.com/three
+module example.com/fake/three
 
-go 1.19
+go 1.22.0

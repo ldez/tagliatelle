@@ -22,8 +22,8 @@ func TestAnalyzer(t *testing.T) {
 	}{
 		{
 			desc:     "simple",
-			dir:      "example.com/one",
-			patterns: []string{"example.com/one"},
+			dir:      "one",
+			patterns: []string{"example.com/fake/one"},
 			cfg: tagliatelle.Config{
 				Base: tagliatelle.Base{
 					Rules: map[string]string{
@@ -43,8 +43,8 @@ func TestAnalyzer(t *testing.T) {
 		},
 		{
 			desc:     "with non-applicable overrides",
-			dir:      "example.com/one",
-			patterns: []string{"example.com/one/..."},
+			dir:      "one",
+			patterns: []string{"example.com/fake/one/..."},
 			cfg: tagliatelle.Config{
 				Base: tagliatelle.Base{
 					Rules: map[string]string{
@@ -76,8 +76,8 @@ func TestAnalyzer(t *testing.T) {
 		},
 		{
 			desc:     "with applicable overrides",
-			dir:      "example.com/two",
-			patterns: []string{"example.com/two/..."},
+			dir:      "two",
+			patterns: []string{"example.com/fake/two/..."},
 			cfg: tagliatelle.Config{
 				Base: tagliatelle.Base{
 					Rules: map[string]string{
@@ -109,8 +109,8 @@ func TestAnalyzer(t *testing.T) {
 		},
 		{
 			desc:     "ignore",
-			dir:      "example.com/three",
-			patterns: []string{"example.com/three/..."},
+			dir:      "three",
+			patterns: []string{"example.com/fake/three/..."},
 			cfg: tagliatelle.Config{
 				Base: tagliatelle.Base{
 					Rules: map[string]string{
@@ -138,6 +138,8 @@ func TestAnalyzer(t *testing.T) {
 		},
 	}
 
+	t.Setenv("GOPROXY", "off")
+
 	for _, test := range testCases {
 		t.Run(test.desc, func(t *testing.T) {
 			runWithSuggestedFixes(t, tagliatelle.New(test.cfg), test.dir, test.patterns...)
@@ -155,12 +157,19 @@ func runWithSuggestedFixes(t *testing.T, a *analysis.Analyzer, dir string, patte
 
 	defer func() { _ = os.Chdir(wd) }()
 
-	testdata := analysistest.TestData()
+	tempDir := t.TempDir()
+
+	// Needs to be run outside testdata.
+	err = CopyFS(tempDir, os.DirFS(filepath.Join(analysistest.TestData(), "src", "example.com")))
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// NOTE: analysistest does not yet support modules;
 	// see https://github.com/golang/go/issues/37054 for details.
 
-	err = os.Chdir(filepath.Join(testdata, "src", filepath.FromSlash(dir)))
+	srcPath := filepath.Join(tempDir, filepath.FromSlash(dir))
+	err = os.Chdir(srcPath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -171,5 +180,5 @@ func runWithSuggestedFixes(t *testing.T, a *analysis.Analyzer, dir string, patte
 		t.Fatal(err)
 	}
 
-	return analysistest.RunWithSuggestedFixes(t, testdata, a, patterns...)
+	return analysistest.Run(t, srcPath, a, patterns...)
 }

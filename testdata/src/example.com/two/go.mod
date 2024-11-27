@@ -1,3 +1,3 @@
-module example.com/two
+module example.com/fake/two
 
-go 1.19
+go 1.22.0

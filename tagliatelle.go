@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/ettle/strcase"
-	"github.com/golangci/modinfo"
 	iradix "github.com/hashicorp/go-immutable-radix/v2"
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -53,17 +52,11 @@ func New(config Config) *analysis.Analyzer {
 		},
 		Requires: []*analysis.Analyzer{
 			inspect.Analyzer,
-			modinfo.Analyzer,
 		},
 	}
 }
 
 func run(pass *analysis.Pass, config Config) (interface{}, error) {
-	info, err := modinfo.FindModuleFromPass(pass)
-	if err != nil {
-		return nil, err
-	}
-
 	isp, ok := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	if !ok {
 		return nil, errors.New("missing inspect analyser")
@@ -73,7 +66,7 @@ func run(pass *analysis.Pass, config Config) (interface{}, error) {
 		(*ast.StructType)(nil),
 	}
 
-	r := createRadixTree(config, info)
+	r := createRadixTree(config, pass.Module.Path)
 
 	isp.Preorder(nodeFilter, func(n ast.Node) {
 		node, ok := n.(*ast.StructType)
@@ -259,7 +252,7 @@ func toHeader(s string) string {
 	return strcase.ToCase(s, strcase.TitleCase, '-')
 }
 
-func createRadixTree(config Config, info modinfo.ModInfo) *iradix.Tree[Base] {
+func createRadixTree(config Config, modPath string) *iradix.Tree[Base] {
 	r := iradix.New[Base]()
 
 	defaultRule := Base{
@@ -284,7 +277,7 @@ func createRadixTree(config Config, info modinfo.ModInfo) *iradix.Tree[Base] {
 			c.Rules[k] = v
 		}
 
-		r, _, _ = r.Insert([]byte(path.Join(info.Path, override.Package)), c)
+		r, _, _ = r.Insert([]byte(path.Join(modPath, override.Package)), c)
 	}
 
 	return r
