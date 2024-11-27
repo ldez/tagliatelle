@@ -154,8 +154,8 @@ linters-settings:
       # Default: []
       overrides:
         -
-          # The package name. (uses `/` only as separator)
-          # Required (but it can be explicitly an empty value to target the root package)
+          # The package path. (uses `/` only as separator)
+          # Required
           pkg: foo/bar
           # Default: empty or the same as the default/root configuration.
           rules:

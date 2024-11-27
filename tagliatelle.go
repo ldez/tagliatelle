@@ -68,21 +68,24 @@ func run(pass *analysis.Pass, config Config) (interface{}, error) {
 		(*ast.StructType)(nil),
 	}
 
-	r := createRadixTree(config, pass.Module.Path)
+	cfg := config.Base
+	if pass.Module != nil {
+		radixTree := createRadixTree(config, pass.Module.Path)
+		_, cfg, _ = radixTree.Root().LongestPrefix([]byte(pass.Pkg.Path()))
+	}
 
 	isp.Preorder(nodeFilter, func(n ast.Node) {
+		if cfg.Ignore {
+			return
+		}
+
 		node, ok := n.(*ast.StructType)
 		if !ok {
 			return
 		}
 
 		for _, field := range node.Fields.List {
-			_, v, _ := r.Root().LongestPrefix([]byte(path.Join(pass.Pkg.Path(), filepath.Base(pass.Fset.File(node.Pos()).Name()))))
-			if v.Ignore {
-				continue
-			}
-
-			analyze(pass, v, node, field)
+			analyze(pass, cfg, node, field)
 		}
 	})
 
@@ -279,7 +282,12 @@ func createRadixTree(config Config, modPath string) *iradix.Tree[Base] {
 			c.Rules[k] = v
 		}
 
-		r, _, _ = r.Insert([]byte(path.Join(modPath, override.Package)), c)
+		key := path.Join(modPath, override.Package)
+		if filepath.Base(modPath) == override.Package {
+			key = modPath
+		}
+
+		r, _, _ = r.Insert([]byte(key), c)
 	}
 
 	return r

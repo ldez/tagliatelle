@@ -40,6 +40,33 @@ func TestAnalyzer(t *testing.T) {
 			},
 		},
 		{
+			desc:     "module name with hyphen",
+			dir:      "one-foo",
+			patterns: []string{"example.com/fake/one-foo/..."},
+			cfg: tagliatelle.Config{
+				Base: tagliatelle.Base{
+					Rules: map[string]string{},
+				},
+				Overrides: []tagliatelle.Overrides{{
+					Package: "one-foo",
+					Base: tagliatelle.Base{
+						UseFieldName: true,
+						Rules: map[string]string{
+							"json":         "camel",
+							"yaml":         "camel",
+							"xml":          "camel",
+							"bson":         "camel",
+							"avro":         "snake",
+							"mapstructure": "kebab",
+							"header":       "header",
+							"envconfig":    "upperSnake",
+							"env":          "upperSnake",
+						},
+					},
+				}},
+			},
+		},
+		{
 			desc:     "with non-applicable overrides",
 			dir:      "one",
 			patterns: []string{"example.com/fake/one/..."},
@@ -58,18 +85,16 @@ func TestAnalyzer(t *testing.T) {
 					},
 					UseFieldName: true,
 				},
-				Overrides: []tagliatelle.Overrides{
-					{
-						Package: "one/b/c",
-						Base: tagliatelle.Base{
-							Rules: map[string]string{
-								"json": "upperSnake",
-								"yaml": "upperSnake",
-							},
-							UseFieldName: false,
+				Overrides: []tagliatelle.Overrides{{
+					Package: "one/b/c",
+					Base: tagliatelle.Base{
+						Rules: map[string]string{
+							"json": "upperSnake",
+							"yaml": "upperSnake",
 						},
+						UseFieldName: false,
 					},
-				},
+				}},
 			},
 		},
 		{
@@ -91,18 +116,16 @@ func TestAnalyzer(t *testing.T) {
 					},
 					UseFieldName: true,
 				},
-				Overrides: []tagliatelle.Overrides{
-					{
-						Package: "b",
-						Base: tagliatelle.Base{
-							Rules: map[string]string{
-								"json": "upperSnake",
-								"yaml": "upperSnake",
-							},
-							UseFieldName: false,
+				Overrides: []tagliatelle.Overrides{{
+					Package: "b",
+					Base: tagliatelle.Base{
+						Rules: map[string]string{
+							"json": "upperSnake",
+							"yaml": "upperSnake",
 						},
+						UseFieldName: false,
 					},
-				},
+				}},
 			},
 		},
 		{
@@ -124,14 +147,12 @@ func TestAnalyzer(t *testing.T) {
 					},
 					UseFieldName: true,
 				},
-				Overrides: []tagliatelle.Overrides{
-					{
-						Package: "b",
-						Base: tagliatelle.Base{
-							Ignore: true,
-						},
+				Overrides: []tagliatelle.Overrides{{
+					Package: "b",
+					Base: tagliatelle.Base{
+						Ignore: true,
 					},
-				},
+				}},
 			},
 		},
 	}
