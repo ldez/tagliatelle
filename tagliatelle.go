@@ -6,10 +6,15 @@ import (
 	"errors"
 	"fmt"
 	"go/ast"
+	"maps"
+	"path"
+	"path/filepath"
 	"reflect"
+	"slices"
 	"strings"
 
 	"github.com/ettle/strcase"
+	iradix "github.com/hashicorp/go-immutable-radix/v2"
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
@@ -17,8 +22,22 @@ import (
 
 // Config the tagliatelle configuration.
 type Config struct {
-	Rules        map[string]string
-	UseFieldName bool
+	Base
+	Overrides []Overrides
+}
+
+// Overrides applies configuration overrides by package.
+type Overrides struct {
+	Base
+	Package string
+}
+
+// Base shared configuration between rules.
+type Base struct {
+	Rules         map[string]string
+	UseFieldName  bool
+	IgnoredFields []string
+	Ignore        bool
 }
 
 // New creates an analyzer.
@@ -27,7 +46,7 @@ func New(config Config) *analysis.Analyzer {
 		Name: "tagliatelle",
 		Doc:  "Checks the struct tags.",
 		Run: func(pass *analysis.Pass) (interface{}, error) {
-			if len(config.Rules) == 0 {
+			if len(config.Rules) == 0 && len(config.Overrides) == 0 {
 				return nil, nil
 			}
 
@@ -49,21 +68,31 @@ func run(pass *analysis.Pass, config Config) (interface{}, error) {
 		(*ast.StructType)(nil),
 	}
 
+	cfg := config.Base
+	if pass.Module != nil {
+		radixTree := createRadixTree(config, pass.Module.Path)
+		_, cfg, _ = radixTree.Root().LongestPrefix([]byte(pass.Pkg.Path()))
+	}
+
 	isp.Preorder(nodeFilter, func(n ast.Node) {
+		if cfg.Ignore {
+			return
+		}
+
 		node, ok := n.(*ast.StructType)
 		if !ok {
 			return
 		}
 
 		for _, field := range node.Fields.List {
-			analyze(pass, config, node, field)
+			analyze(pass, cfg, node, field)
 		}
 	})
 
 	return nil, nil
 }
 
-func analyze(pass *analysis.Pass, config Config, n *ast.StructType, field *ast.Field) {
+func analyze(pass *analysis.Pass, config Base, n *ast.StructType, field *ast.Field) {
 	if n.Fields == nil || n.Fields.NumFields() < 1 {
 		// skip empty structs
 		return
@@ -80,6 +109,10 @@ func analyze(pass *analysis.Pass, config Config, n *ast.StructType, field *ast.F
 		return
 	}
 
+	if slices.Contains(config.IgnoredFields, fieldName) {
+		return
+	}
+
 	for key, convName := range config.Rules {
 		if convName == "" {
 			continue
@@ -93,6 +126,13 @@ func analyze(pass *analysis.Pass, config Config, n *ast.StructType, field *ast.F
 
 		if value == "-" {
 			// skip when skipped :)
+			continue
+		}
+
+		// TODO(ldez): need to be rethink.
+		// tagliatelle should try to remain neutral in terms of format.
+		if key == "xml" && strings.ContainsAny(value, ">:") {
+			// ignore XML names than contains path
 			continue
 		}
 
@@ -215,4 +255,55 @@ func getConverter(c string) (func(s string) string, error) {
 
 func toHeader(s string) string {
 	return strcase.ToCase(s, strcase.TitleCase, '-')
+}
+
+func createRadixTree(config Config, modPath string) *iradix.Tree[Base] {
+	r := iradix.New[Base]()
+
+	defaultRule := Base{
+		Rules:        copyMap(config.Rules),
+		UseFieldName: config.UseFieldName,
+		Ignore:       config.Ignore,
+	}
+
+	defaultRule.IgnoredFields = append(defaultRule.IgnoredFields, config.IgnoredFields...)
+
+	r, _, _ = r.Insert([]byte(""), defaultRule)
+
+	for _, override := range config.Overrides {
+		c := Base{
+			UseFieldName: override.UseFieldName,
+			Ignore:       override.Ignore,
+		}
+
+		// If there is an override the base configuration is ignored.
+		if len(override.IgnoredFields) == 0 {
+			c.IgnoredFields = append(c.IgnoredFields, config.IgnoredFields...)
+		} else {
+			c.IgnoredFields = append(c.IgnoredFields, override.IgnoredFields...)
+		}
+
+		// Copy the rules from the base.
+		c.Rules = copyMap(config.Rules)
+
+		// Overrides the rule from the base.
+		for k, v := range override.Rules {
+			c.Rules[k] = v
+		}
+
+		key := path.Join(modPath, override.Package)
+		if filepath.Base(modPath) == override.Package {
+			key = modPath
+		}
+
+		r, _, _ = r.Insert([]byte(key), c)
+	}
+
+	return r
+}
+
+func copyMap[K, V comparable](m map[K]V) map[K]V {
+	c := make(map[K]V)
+	maps.Copy(c, m)
+	return c
 }
