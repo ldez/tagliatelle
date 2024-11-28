@@ -118,7 +118,7 @@ linters-settings:
     case:
       # Define the association between tag name and case.
       # Any struct tag name can be used.
-      # Support string cases:
+      # Supported string cases:
       # - `camel`
       # - `pascal`
       # - `kebab`
@@ -154,7 +154,7 @@ linters-settings:
       # Default: []
       overrides:
         -
-          # The package path. (uses `/` only as separator)
+          # The package path (uses `/` only as a separator).
           # Required
           pkg: foo/bar
           # Default: empty or the same as the default/root configuration.
@@ -168,7 +168,7 @@ linters-settings:
           ignored-fields:
             - Bar
             - Foo
-          # Ignore the package (it takes the precedence over all other configuration).
+          # Ignore the package (takes precedence over all other configurations).
           # Default: false
           ignore: true
 ```
