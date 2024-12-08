@@ -162,23 +162,16 @@ linters-settings:
           #
           # Required
           case: camel
-          # Adds 'AMQP', 'DB', 'GID', 'RTP', 'SIP', 'TS' to initialisms.
-          # remove 'LHS', 'RHS' from initialisms.
+          # Adds 'AMQP', 'DB', 'GID', 'RTP', 'SIP', 'TS' to initialisms,
+          # and removes 'LHS', 'RHS' from initialisms.
           # Default: true
           extra-initialisms: false
-          # Defines initialism overrides.
-          # To disable a default initialism,
-          # You should associate the initialism with `false`.
+          # Defines initialism additions and overrides.
           # Default: empty
           initialism-overrides:
-            AMQP: true
-            DB: true
-            GID: true
-            LHS: false
-            RHS: false
-            RTP: true
-            SIP: true
-            TS: true
+            DB: true # add a new initialism
+            LHS: false # disable a default initialism.
+            # ...
       # Uses the struct field name to check the name of the struct tag.
       # Default: false
       use-field-name: true
@@ -198,6 +191,9 @@ linters-settings:
           rules:
             json: snake
             xml: pascal
+          # Default: empty or the same as the default/root configuration.
+          extended-rules:
+            # same options as the base `extended-rules`.
           # Default: false (WARNING: it doesn't follow the default/root configuration)
           use-field-name: true
           # The field names to ignore.
