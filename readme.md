@@ -97,15 +97,14 @@ type Foo struct {
 }
 ```
 
-## What this tool is about
+## What this linter is about
 
-This tool is about validating tags according to rules you define.
-The tool also allows to fix tags according to the rules you defined.
+This linter is about validating tags according to rules you define.
+The linter also allows to fix tags according to the rules you defined.
 
-This tool is not intended to validate the fact a tag in valid or not.
-To do that, you can use `go vet`, or use [golangci-lint](https://golangci-lint.run) ["go vet"](https://golangci-lint.run/usage/linters/#govet) linter.
+This linter is not intended to validate the fact a tag in valid or not.
 
-## How to use the tool
+## How to use the linter
 
 ### As a golangci-lint linter
 
@@ -114,9 +113,9 @@ Define the rules, you want via your [golangci-lint](https://golangci-lint.run) c
 ```yaml
 linters-settings:
   tagliatelle:
-    # Check the struct tag name case.
+    # Checks the struct tag name case.
     case:
-      # Define the association between tag name and case.
+      # Defines the association between tag name and case.
       # Any struct tag name can be used.
       # Supported string cases:
       # - `camel`
@@ -142,7 +141,38 @@ linters-settings:
         env: upperSnake
         envconfig: upperSnake
         whatever: snake
-      # Use the struct field name to check the name of the struct tag.
+      # Defines the association between tag name and case.
+      # Important: the `extended-rules` overrides `rules`.
+      # Default: empty
+      extended-rules:
+        json:
+          # Supported string cases:
+          # - `camel`
+          # - `pascal`
+          # - `kebab`
+          # - `snake`
+          # - `upperSnake`
+          # - `goCamel`
+          # - `goPascal`
+          # - `goKebab`
+          # - `goSnake`
+          # - `header`
+          # - `lower`
+          # - `header`
+          #
+          # Required
+          case: camel
+          # Adds 'AMQP', 'DB', 'GID', 'RTP', 'SIP', 'TS' to initialisms,
+          # and removes 'LHS', 'RHS' from initialisms.
+          # Default: true
+          extra-initialisms: false
+          # Defines initialism additions and overrides.
+          # Default: empty
+          initialism-overrides:
+            DB: true # add a new initialism
+            LHS: false # disable a default initialism.
+            # ...
+      # Uses the struct field name to check the name of the struct tag.
       # Default: false
       use-field-name: true
       # The field names to ignore.
@@ -161,6 +191,9 @@ linters-settings:
           rules:
             json: snake
             xml: pascal
+          # Default: empty or the same as the default/root configuration.
+          extended-rules:
+            # same options as the base `extended-rules`.
           # Default: false (WARNING: it doesn't follow the default/root configuration)
           use-field-name: true
           # The field names to ignore.
@@ -171,6 +204,7 @@ linters-settings:
           # Ignore the package (takes precedence over all other configurations).
           # Default: false
           ignore: true
+
 ```
 
 #### Examples
@@ -251,9 +285,9 @@ Here are the default rules for the well known and used tags, when using tagliate
 
 ### Custom Rules
 
-The tool is not limited to the tags used in example, you can use it to validate any tag.
+The linter is not limited to the tags used in example, **you can use it to validate any tag**.
 
-You can add your own tag, for example `whatever` and tells the tool you want to use `kebab`.
+You can add your own tag, for example `whatever` and tells the linter you want to use `kebab`.
 
 This option is only available via [golangci-lint](https://golangci-lint.run).
 

@@ -13,7 +13,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/ettle/strcase"
 	iradix "github.com/hashicorp/go-immutable-radix/v2"
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
@@ -35,9 +34,17 @@ type Overrides struct {
 // Base shared configuration between rules.
 type Base struct {
 	Rules         map[string]string
+	ExtendedRules map[string]ExtendedRule
 	UseFieldName  bool
 	IgnoredFields []string
 	Ignore        bool
+}
+
+// ExtendedRule allows to customize rules.
+type ExtendedRule struct {
+	Case                string
+	ExtraInitialisms    bool
+	InitialismOverrides map[string]bool
 }
 
 // New creates an analyzer.
@@ -46,15 +53,13 @@ func New(config Config) *analysis.Analyzer {
 		Name: "tagliatelle",
 		Doc:  "Checks the struct tags.",
 		Run: func(pass *analysis.Pass) (any, error) {
-			if len(config.Rules) == 0 && len(config.Overrides) == 0 {
+			if len(config.Rules) == 0 && len(config.ExtendedRules) == 0 && len(config.Overrides) == 0 {
 				return nil, nil
 			}
 
 			return run(pass, config)
 		},
-		Requires: []*analysis.Analyzer{
-			inspect.Analyzer,
-		},
+		Requires: []*analysis.Analyzer{inspect.Analyzer},
 	}
 }
 
@@ -109,60 +114,74 @@ func analyze(pass *analysis.Pass, config Base, n *ast.StructType, field *ast.Fie
 		return
 	}
 
+	cleanRules(config)
+
 	if slices.Contains(config.IgnoredFields, fieldName) {
 		return
 	}
 
+	for key, extRule := range config.ExtendedRules {
+		report(pass, config, key, extRule.Case, fieldName, n, field, func() (Converter, error) {
+			return ruleToConverter(extRule)
+		})
+	}
+
 	for key, convName := range config.Rules {
-		if convName == "" {
-			continue
-		}
+		report(pass, config, key, convName, fieldName, n, field, func() (Converter, error) {
+			return getSimpleConverter(convName)
+		})
+	}
+}
 
-		value, flags, ok := lookupTagValue(field.Tag, key)
-		if !ok {
-			// skip when no struct tag for the key
-			continue
-		}
+func report(pass *analysis.Pass, config Base, key, convName, fieldName string, n *ast.StructType, field *ast.Field, fn ConverterCallback) {
+	if convName == "" {
+		return
+	}
 
-		if value == "-" {
-			// skip when skipped :)
-			continue
-		}
+	value, flags, ok := lookupTagValue(field.Tag, key)
+	if !ok {
+		// skip when no struct tag for the key
+		return
+	}
 
-		// TODO(ldez): need to be rethink.
-		// tagliatelle should try to remain neutral in terms of format.
-		if key == "xml" && strings.ContainsAny(value, ">:") {
-			// ignore XML names than contains path
-			continue
-		}
+	if value == "-" {
+		// skip when skipped :)
+		return
+	}
 
-		// TODO(ldez): need to be rethink.
-		// This is an exception because of a bug.
-		// https://github.com/ldez/tagliatelle/issues/8
-		// For now, tagliatelle should try to remain neutral in terms of format.
-		if hasTagFlag(flags, "inline") {
-			// skip for inline children (no name to lint)
-			continue
-		}
+	// TODO(ldez): need to be rethink.
+	// tagliatelle should try to remain neutral in terms of format.
+	if key == "xml" && strings.ContainsAny(value, ">:") {
+		// ignore XML names than contains path
+		return
+	}
 
-		if value == "" {
-			value = fieldName
-		}
+	// TODO(ldez): need to be rethink.
+	// This is an exception because of a bug.
+	// https://github.com/ldez/tagliatelle/issues/8
+	// For now, tagliatelle should try to remain neutral in terms of format.
+	if hasTagFlag(flags, "inline") {
+		// skip for inline children (no name to lint)
+		return
+	}
 
-		converter, err := getConverter(convName)
-		if err != nil {
-			pass.Reportf(n.Pos(), "%s(%s): %v", key, convName, err)
-			continue
-		}
+	if value == "" {
+		value = fieldName
+	}
 
-		expected := value
-		if config.UseFieldName {
-			expected = fieldName
-		}
+	converter, err := fn()
+	if err != nil {
+		pass.Reportf(n.Pos(), "%s(%s): %v", key, convName, err)
+		return
+	}
 
-		if value != converter(expected) {
-			pass.Reportf(field.Tag.Pos(), "%s(%s): got '%s' want '%s'", key, convName, value, converter(expected))
-		}
+	expected := value
+	if config.UseFieldName {
+		expected = fieldName
+	}
+
+	if value != converter(expected) {
+		pass.Reportf(field.Tag.Pos(), "%s(%s): got '%s' want '%s'", key, convName, value, converter(expected))
 	}
 }
 
@@ -222,48 +241,14 @@ func hasTagFlag(flags []string, query string) bool {
 	return false
 }
 
-func getConverter(c string) (func(s string) string, error) {
-	switch c {
-	case "camel":
-		return strcase.ToCamel, nil
-	case "pascal":
-		return strcase.ToPascal, nil
-	case "kebab":
-		return strcase.ToKebab, nil
-	case "snake":
-		return strcase.ToSnake, nil
-	case "goCamel":
-		return strcase.ToGoCamel, nil
-	case "goPascal":
-		return strcase.ToGoPascal, nil
-	case "goKebab":
-		return strcase.ToGoKebab, nil
-	case "goSnake":
-		return strcase.ToGoSnake, nil
-	case "header":
-		return toHeader, nil
-	case "upper":
-		return strings.ToUpper, nil
-	case "upperSnake":
-		return strcase.ToSNAKE, nil
-	case "lower":
-		return strings.ToLower, nil
-	default:
-		return nil, fmt.Errorf("unsupported case: %s", c)
-	}
-}
-
-func toHeader(s string) string {
-	return strcase.ToCase(s, strcase.TitleCase, '-')
-}
-
 func createRadixTree(config Config, modPath string) *iradix.Tree[Base] {
 	r := iradix.New[Base]()
 
 	defaultRule := Base{
-		Rules:        copyMap(config.Rules),
-		UseFieldName: config.UseFieldName,
-		Ignore:       config.Ignore,
+		Rules:         maps.Clone(config.Rules),
+		ExtendedRules: maps.Clone(config.ExtendedRules),
+		UseFieldName:  config.UseFieldName,
+		Ignore:        config.Ignore,
 	}
 
 	defaultRule.IgnoredFields = append(defaultRule.IgnoredFields, config.IgnoredFields...)
@@ -284,11 +269,19 @@ func createRadixTree(config Config, modPath string) *iradix.Tree[Base] {
 		}
 
 		// Copy the rules from the base.
-		c.Rules = copyMap(config.Rules)
+		c.Rules = maps.Clone(config.Rules)
 
 		// Overrides the rule from the base.
 		for k, v := range override.Rules {
 			c.Rules[k] = v
+		}
+
+		// Copy the extended rules from the base.
+		c.ExtendedRules = maps.Clone(config.ExtendedRules)
+
+		// Overrides the extended rule from the base.
+		for k, v := range override.ExtendedRules {
+			c.ExtendedRules[k] = v
 		}
 
 		key := path.Join(modPath, override.Package)
@@ -302,8 +295,8 @@ func createRadixTree(config Config, modPath string) *iradix.Tree[Base] {
 	return r
 }
 
-func copyMap[K, V comparable](m map[K]V) map[K]V {
-	c := make(map[K]V)
-	maps.Copy(c, m)
-	return c
+func cleanRules(config Base) {
+	for k := range config.ExtendedRules {
+		delete(config.Rules, k)
+	}
 }
