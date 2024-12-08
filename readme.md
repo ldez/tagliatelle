@@ -164,8 +164,8 @@ linters-settings:
           case: camel
           # Adds 'AMQP', 'DB', 'GID', 'RTP', 'SIP', 'TS' to initialisms,
           # and removes 'LHS', 'RHS' from initialisms.
-          # Default: true
-          extra-initialisms: false
+          # Default: false
+          extra-initialisms: true
           # Defines initialism additions and overrides.
           # Default: empty
           initialism-overrides:
