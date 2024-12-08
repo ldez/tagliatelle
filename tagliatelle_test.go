@@ -155,6 +155,58 @@ func TestAnalyzer(t *testing.T) {
 				}},
 			},
 		},
+		{
+			desc:     "Extended rules",
+			dir:      "extended",
+			patterns: []string{"example.com/fake/extended/..."},
+			cfg: tagliatelle.Config{
+				Base: tagliatelle.Base{
+					ExtendedRules: map[string]tagliatelle.ExtendedRule{
+						"json": {
+							Case: "goCamel",
+							InitialismOverrides: map[string]bool{
+								"DB":  true,
+								"URL": true,
+							},
+						},
+						"sample": {
+							Case: "goCamel",
+						},
+						"yaml": {
+							Case: "goSnake",
+							InitialismOverrides: map[string]bool{
+								"DB": true,
+							},
+						},
+					},
+					UseFieldName: true,
+				},
+			},
+		},
+		{
+			desc:     "Extended rules overrides base rules",
+			dir:      "extended",
+			patterns: []string{"example.com/fake/extended/..."},
+			cfg: tagliatelle.Config{
+				Base: tagliatelle.Base{
+					Rules: map[string]string{
+						"json": "snake",
+					},
+					ExtendedRules: map[string]tagliatelle.ExtendedRule{
+						"json": {
+							Case: "goCamel",
+							InitialismOverrides: map[string]bool{
+								"DB": true,
+							},
+						},
+						"sample": {
+							Case: "goCamel",
+						},
+					},
+					UseFieldName: true,
+				},
+			},
+		},
 	}
 
 	t.Setenv("GOPROXY", "off")
