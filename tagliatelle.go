@@ -160,7 +160,7 @@ func report(pass *analysis.Pass, config Base, key, convName, fieldName string, n
 	// This is an exception because of a bug.
 	// https://github.com/ldez/tagliatelle/issues/8
 	// For now, tagliatelle should try to remain neutral in terms of format.
-	if hasTagFlag(flags, "inline") {
+	if slices.Contains(flags, "inline") {
 		// skip for inline children (no name to lint)
 		return
 	}
@@ -229,16 +229,6 @@ func lookupTagValue(tag *ast.BasicLit, key string) (name string, flags []string,
 	}
 
 	return values[0], values[1:], true
-}
-
-func hasTagFlag(flags []string, query string) bool {
-	for _, flag := range flags {
-		if flag == query {
-			return true
-		}
-	}
-
-	return false
 }
 
 func createRadixTree(config Config, modPath string) *iradix.Tree[Base] {
