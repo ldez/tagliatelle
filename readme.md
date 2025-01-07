@@ -99,10 +99,10 @@ type Foo struct {
 
 ## What this linter is about
 
-This linter is about validating tags according to rules you define.
-The linter also allows to fix tags according to the rules you defined.
+This linter is about validating tags according to the rules you define.
+The linter also allows you to fix tags according to the rules you defined.
 
-This linter is not intended to validate the fact a tag in valid or not.
+This linter is not intended to validate the fact a tag is valid or not.
 
 ## How to use the linter
 
@@ -111,6 +111,10 @@ This linter is not intended to validate the fact a tag in valid or not.
 Define the rules, you want via your [golangci-lint](https://golangci-lint.run) configuration file:
 
 ```yaml
+linters:
+  enable:
+    - tagliatelle
+
 linters-settings:
   tagliatelle:
     # Checks the struct tag name case.
@@ -272,7 +276,7 @@ then launch it manually.
 
 ## Rules
 
-Here are the default rules for the well known and used tags, when using tagliatelle as a binary or [golangci-lint linter](https://golangci-lint.run/usage/linters/#tagliatelle):
+Here are the default rules for the well-known and used tags, when using tagliatelle as a binary or [golangci-lint linter](https://golangci-lint.run/usage/linters/#tagliatelle):
 
 - `json`: `camel`
 - `yaml`: `camel`
