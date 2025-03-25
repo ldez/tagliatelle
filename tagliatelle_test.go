@@ -240,6 +240,7 @@ func runWithSuggestedFixes(t *testing.T, a *analysis.Analyzer, dir string, patte
 	// see https://github.com/golang/go/issues/37054 for details.
 
 	srcPath := filepath.Join(tempDir, filepath.FromSlash(dir))
+
 	err = os.Chdir(srcPath)
 	if err != nil {
 		t.Fatal(err)

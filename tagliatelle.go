@@ -74,6 +74,7 @@ func run(pass *analysis.Pass, config Config) (any, error) {
 	}
 
 	cfg := config.Base
+
 	if pass.Module != nil {
 		radixTree := createRadixTree(config, pass.Module.Path)
 		_, cfg, _ = radixTree.Root().LongestPrefix([]byte(pass.Pkg.Path()))
@@ -187,6 +188,7 @@ func report(pass *analysis.Pass, config Base, key, convName, fieldName string, n
 
 func getFieldName(field *ast.Field) (string, error) {
 	var name string
+
 	for _, n := range field.Names {
 		if n.Name != "" {
 			name = n.Name

@@ -115,100 +115,99 @@ linters:
   enable:
     - tagliatelle
 
-linters-settings:
-  tagliatelle:
-    # Checks the struct tag name case.
-    case:
-      # Defines the association between tag name and case.
-      # Any struct tag name can be used.
-      # Supported string cases:
-      # - `camel`
-      # - `pascal`
-      # - `kebab`
-      # - `snake`
-      # - `upperSnake`
-      # - `goCamel`
-      # - `goPascal`
-      # - `goKebab`
-      # - `goSnake`
-      # - `upper`
-      # - `lower`
-      # - `header`
-      rules:
-        json: camel
-        yaml: camel
-        xml: camel
-        toml: camel
-        bson: camel
-        avro: snake
-        mapstructure: kebab
-        env: upperSnake
-        envconfig: upperSnake
-        whatever: snake
-      # Defines the association between tag name and case.
-      # Important: the `extended-rules` overrides `rules`.
-      # Default: empty
-      extended-rules:
-        json:
-          # Supported string cases:
-          # - `camel`
-          # - `pascal`
-          # - `kebab`
-          # - `snake`
-          # - `upperSnake`
-          # - `goCamel`
-          # - `goPascal`
-          # - `goKebab`
-          # - `goSnake`
-          # - `header`
-          # - `lower`
-          # - `header`
-          #
-          # Required
-          case: camel
-          # Adds 'AMQP', 'DB', 'GID', 'RTP', 'SIP', 'TS' to initialisms,
-          # and removes 'LHS', 'RHS' from initialisms.
-          # Default: false
-          extra-initialisms: true
-          # Defines initialism additions and overrides.
-          # Default: empty
-          initialism-overrides:
-            DB: true # add a new initialism
-            LHS: false # disable a default initialism.
-            # ...
-      # Uses the struct field name to check the name of the struct tag.
-      # Default: false
-      use-field-name: true
-      # The field names to ignore.
-      # Default: []
-      ignored-fields:
-        - Bar
-        - Foo
-      # Overrides the default/root configuration.
-      # Default: []
-      overrides:
-        -
-          # The package path (uses `/` only as a separator).
-          # Required
-          pkg: foo/bar
-          # Default: empty or the same as the default/root configuration.
-          rules:
-            json: snake
-            xml: pascal
-          # Default: empty or the same as the default/root configuration.
-          extended-rules:
-            # same options as the base `extended-rules`.
-          # Default: false (WARNING: it doesn't follow the default/root configuration)
-          use-field-name: true
-          # The field names to ignore.
-          # Default: [] or the same as the default/root configuration.
-          ignored-fields:
-            - Bar
-            - Foo
-          # Ignore the package (takes precedence over all other configurations).
-          # Default: false
-          ignore: true
-
+  settings:
+    tagliatelle:
+      # Checks the struct tag name case.
+      case:
+        # Defines the association between tag name and case.
+        # Any struct tag name can be used.
+        # Supported string cases:
+        # - `camel`
+        # - `pascal`
+        # - `kebab`
+        # - `snake`
+        # - `upperSnake`
+        # - `goCamel`
+        # - `goPascal`
+        # - `goKebab`
+        # - `goSnake`
+        # - `upper`
+        # - `lower`
+        # - `header`
+        rules:
+          json: camel
+          yaml: camel
+          xml: camel
+          toml: camel
+          bson: camel
+          avro: snake
+          mapstructure: kebab
+          env: upperSnake
+          envconfig: upperSnake
+          whatever: snake
+        # Defines the association between tag name and case.
+        # Important: the `extended-rules` overrides `rules`.
+        # Default: empty
+        extended-rules:
+          json:
+            # Supported string cases:
+            # - `camel`
+            # - `pascal`
+            # - `kebab`
+            # - `snake`
+            # - `upperSnake`
+            # - `goCamel`
+            # - `goPascal`
+            # - `goKebab`
+            # - `goSnake`
+            # - `header`
+            # - `lower`
+            # - `header`
+            #
+            # Required
+            case: camel
+            # Adds 'AMQP', 'DB', 'GID', 'RTP', 'SIP', 'TS' to initialisms,
+            # and removes 'LHS', 'RHS' from initialisms.
+            # Default: false
+            extra-initialisms: true
+            # Defines initialism additions and overrides.
+            # Default: empty
+            initialism-overrides:
+              DB: true # add a new initialism
+              LHS: false # disable a default initialism.
+              # ...
+        # Uses the struct field name to check the name of the struct tag.
+        # Default: false
+        use-field-name: true
+        # The field names to ignore.
+        # Default: []
+        ignored-fields:
+          - Bar
+          - Foo
+        # Overrides the default/root configuration.
+        # Default: []
+        overrides:
+          -
+            # The package path (uses `/` only as a separator).
+            # Required
+            pkg: foo/bar
+            # Default: empty or the same as the default/root configuration.
+            rules:
+              json: snake
+              xml: pascal
+            # Default: empty or the same as the default/root configuration.
+            extended-rules:
+              # same options as the base `extended-rules`.
+            # Default: false (WARNING: it doesn't follow the default/root configuration)
+            use-field-name: true
+            # The field names to ignore.
+            # Default: [] or the same as the default/root configuration.
+            ignored-fields:
+              - Bar
+              - Foo
+            # Ignore the package (takes precedence over all other configurations).
+            # Default: false
+            ignore: true
 ```
 
 #### Examples
@@ -216,50 +215,53 @@ linters-settings:
 Overrides case rules for the package `foo/bar`:
 
 ```yaml
-linters-settings:
-  tagliatelle:
-    case:
-      rules:
-        json: camel
-        yaml: camel
-        xml: camel
-      overrides:
-        - pkg: foo/bar
-          rules:
-            json: snake
-            xml: pascal
+linters:
+  settings:
+    tagliatelle:
+      case:
+        rules:
+          json: camel
+          yaml: camel
+          xml: camel
+        overrides:
+          - pkg: foo/bar
+            rules:
+              json: snake
+              xml: pascal
 ```
 
 Ignore fields inside the package `foo/bar`:
 
 ```yaml
-linters-settings:
-  tagliatelle:
-    case:
-      rules:
-        json: camel
-        yaml: camel
-        xml: camel
-      overrides:
-        - pkg: foo/bar
-          ignored-fields:
-            - Bar
-            - Foo
+linters:
+  settings:
+    tagliatelle:
+      case:
+        rules:
+          json: camel
+          yaml: camel
+          xml: camel
+        overrides:
+          - pkg: foo/bar
+            ignored-fields:
+              - Bar
+              - Foo
 ```
 
 Ignore the package `foo/bar`:
 
 ```yaml
-linters-settings:
-  tagliatelle:
-    case:
-      rules:
-        json: camel
-        yaml: camel
-        xml: camel
-      overrides:
-        - pkg: foo/bar
-          ignore: true
+linters:
+  settings:
+    tagliatelle:
+      case:
+        rules:
+          json: camel
+          yaml: camel
+          xml: camel
+        overrides:
+          - pkg: foo/bar
+            ignore: true
 ```
 
 More information here https://golangci-lint.run/usage/linters/#tagliatelle
@@ -296,19 +298,20 @@ You can add your own tag, for example `whatever` and tells the linter you want t
 This option is only available via [golangci-lint](https://golangci-lint.run).
 
 ```yaml
-linters-settings:
-  tagliatelle:
-    # Check the struck tag name case.
-    case:
-      rules:
-        # Any struct tag type can be used.
-        # Support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
-        json: camel
-        yaml: camel
-        xml: camel
-        toml: camel
-        whatever: kebab
-      # Use the struct field name to check the name of the struct tag.
-      # Default: false
-      use-field-name: true
+linters:
+  settings:
+    tagliatelle:
+      # Check the struck tag name case.
+      case:
+        rules:
+          # Any struct tag type can be used.
+          # Support string case: `camel`, `pascal`, `kebab`, `snake`, `goCamel`, `goPascal`, `goKebab`, `goSnake`, `upper`, `lower`
+          json: camel
+          yaml: camel
+          xml: camel
+          toml: camel
+          whatever: kebab
+        # Use the struct field name to check the name of the struct tag.
+        # Default: false
+        use-field-name: true
 ```
