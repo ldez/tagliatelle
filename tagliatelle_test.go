@@ -1,6 +1,7 @@
 package tagliatelle_test
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -246,7 +247,7 @@ func runWithSuggestedFixes(t *testing.T, a *analysis.Analyzer, dir string, patte
 		t.Fatal(err)
 	}
 
-	output, err := exec.Command("go", "mod", "vendor").CombinedOutput()
+	output, err := exec.CommandContext(context.TODO(), "go", "mod", "vendor").CombinedOutput()
 	if err != nil {
 		t.Log(string(output))
 		t.Fatal(err)

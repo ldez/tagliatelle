@@ -22,12 +22,14 @@ import (
 // Config the tagliatelle configuration.
 type Config struct {
 	Base
+
 	Overrides []Overrides
 }
 
 // Overrides applies configuration overrides by package.
 type Overrides struct {
 	Base
+
 	Package string
 }
 
