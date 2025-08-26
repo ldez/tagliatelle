@@ -255,7 +255,7 @@ func createRadixTree(config Config, modPath string) *iradix.Tree[Base] {
 			Ignore:       override.Ignore,
 		}
 
-		// If there is an override the base configuration is ignored.
+		// If there is an override, the base configuration is ignored.
 		if len(override.IgnoredFields) == 0 {
 			c.IgnoredFields = append(c.IgnoredFields, config.IgnoredFields...)
 		} else {
