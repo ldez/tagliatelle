@@ -1,4 +1,4 @@
-name: Main
+name: Linting
 
 on:
   push:
@@ -12,12 +12,12 @@ permissions: {}
 
 jobs:
 
-  main:
-    name: Main Process
+  go:
+    name: Go
     runs-on: ubuntu-latest
     env:
       GO_VERSION: stable
-      GOLANGCI_LINT_VERSION: v2.11
+      GOLANGCI_LINT_VERSION: v2.12
       CGO_ENABLED: 0
 
     steps:
@@ -32,15 +32,18 @@ jobs:
         run: |
           go mod tidy --diff
 
+      - uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9.2.0
+        with:
+          version: ${{ env.GOLANGCI_LINT_VERSION }}
+
+  gh-workflows:
+    name: Workflows
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - uses: zizmorcore/zizmor-action@b1d7e1fb5de872772f31590499237e7cce841e8e # v0.5.3
         with:
           advanced-security: false
           annotations: true
-
-      - uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9.2.0
-        with:
-          version: ${{ env.GOLANGCI_LINT_VERSION }}
-          install-only: true
-
-      - name: Make
-        run: make
