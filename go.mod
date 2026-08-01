@@ -5,11 +5,11 @@ go 1.25.0
 require (
 	github.com/ettle/strcase v0.2.0
 	github.com/hashicorp/go-immutable-radix/v2 v2.1.0
-	golang.org/x/tools v0.46.0
+	golang.org/x/tools v0.48.0
 )
 
 require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
-	golang.org/x/mod v0.37.0 // indirect
-	golang.org/x/sync v0.21.0 // indirect
+	golang.org/x/mod v0.38.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
 )
