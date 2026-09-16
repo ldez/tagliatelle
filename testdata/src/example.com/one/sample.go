@@ -54,3 +54,8 @@ type MessedUpTags struct {
 	// a tag supported by the rule cannot be validated because foo tag breaks the whole tags block
 	Mixed string `json:"mixed" foo:mixed`
 }
+
+// TODO(ldez) enable this when go1.27 will be the default.
+// type Field struct {
+// 	Value jsontext.Value `json:",embed"`
+// }
