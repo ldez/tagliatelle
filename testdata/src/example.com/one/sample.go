@@ -55,7 +55,6 @@ type MessedUpTags struct {
 	Mixed string `json:"mixed" foo:mixed`
 }
 
-// TODO(ldez) enable this when go1.27 will be the default.
-// type Field struct {
-// 	Value jsontext.Value `json:",embed"`
-// }
+type Field[T any] struct {
+	Value map[string]T `json:",embed"`
+}
